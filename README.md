@@ -40,4 +40,4 @@ https://ljakdk.github.io/mbti/?class=QP6GZ6
 
 ---
 
-만든이 · [까망이고동이](https://www.instagram.com/ggagossam/) | v2.0
+만든이 · [까망이고동이](https://www.instagram.com/ggagossam/) | v2.1
