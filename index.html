@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나를 알아보는 성격 여행 🌈 초등 MBTI</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌈</text></svg>">
+</head>
+<body>
+
+<div class="deco d1">🌸</div>
+<div class="deco d2">⭐</div>
+<div class="deco d3">🍭</div>
+<div class="deco d4">☁️</div>
+
+<div class="wrap">
+
+  <!-- ═══════════ 1. 시작 화면 ═══════════ -->
+  <section id="screen-start" class="screen on">
+    <div class="hero">
+      <span class="badge">🎈 초등학생을 위한 성격 알아보기</span>
+      <h1 id="heroTitle"><span class="t1">나를 알아보는</span> <span class="hl">성격 여행</span></h1>
+      <div class="title-divider"><span></span><span></span><span></span></div>
+      <p class="sub">20개의 질문에 답하면<br>나의 <span class="k1">성격</span>, <span class="k2">강점</span>, <span class="k3">어울리는 직업</span>을 알려 줘요!</p>
+
+      <div class="name-box">
+        <label for="nameInput">✏️ 내 이름을 알려 주세요</label>
+        <input id="nameInput" type="text" placeholder="예) 김하늘" maxlength="12" autocomplete="off">
+      </div>
+
+      <div class="btn-row" style="margin-top:18px">
+        <button class="btn" id="btnStart">🚀 검사 시작하기</button>
+        <button class="btn ghost" id="btnResume" style="display:none">↩️ 이어서 하기</button>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item"><div class="ic">⏱️</div><div class="t">5분이면 끝!</div><div class="d">20개 질문</div></div>
+        <div class="info-item"><div class="ic">💝</div><div class="t">정답은 없어요</div><div class="d">솔직하게 고르기</div></div>
+        <div class="info-item"><div class="ic">🎁</div><div class="t">16가지 결과</div><div class="d">직업까지 추천</div></div>
+      </div>
+
+      <p class="notice">
+        ※ 이 검사는 정식 MBTI 검사가 아니라, 나를 이해해 보는 <b>재미있는 놀이 활동</b>이에요.<br>
+        결과가 나와 딱 맞지 않아도 괜찮아요. 사람은 자라면서 계속 변한답니다! 🌱
+      </p>
+    </div>
+
+    <div class="btn-row no-print" style="margin-top:16px">
+      <button class="btn sm ghost" id="btnGoTypes">📖 16가지 유형 미리 보기</button>
+      <button class="btn sm ghost" id="btnGoClass">🏫 우리 반 결과판</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ 2. 검사 화면 ═══════════ -->
+  <section id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progText">1 / 20</span>
+          <span id="progPct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+      </div>
+    </div>
+
+    <div class="card q-card" id="qCard">
+      <span class="q-num" id="qNum">질문 1</span>
+      <span class="q-emoji" id="qEmoji">🏃</span>
+      <p class="q-text" id="qText">질문 내용</p>
+      <div class="answers">
+        <button class="answer" id="ansA"><span class="ic">🤝</span><span class="tx">선택지 1</span></button>
+        <button class="answer" id="ansB"><span class="ic">📖</span><span class="tx">선택지 2</span></button>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div class="quiz-foot">
+      <button class="btn sm ghost" id="btnPrev">◀ 이전 질문</button>
+      <button class="btn sm ghost" id="btnQuit">🏠 처음으로</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ 3. 결과 계산 중 ═══════════ -->
+  <section id="screen-loading" class="screen">
+    <div class="card loading">
+      <span class="spin">🎡</span>
+      <p class="msg" id="loadMsg">두근두근… 결과를 만드는 중이에요!</p>
+      <p class="sub">잠시만 기다려 주세요 ✨</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ 4. 결과 화면 ═══════════ -->
+  <section id="screen-result" class="screen">
+    <div id="resultBody"></div>
+
+    <div class="btn-row no-print" style="margin-top:20px">
+      <button class="btn mint" id="btnSaveClass">💾 우리 반 결과판에 저장</button>
+      <button class="btn ghost" id="btnRetry">🔄 다시 검사하기</button>
+      <button class="btn ghost" id="btnTypesFromResult">📖 16가지 유형 보기</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ 5. 16유형 도감 ═══════════ -->
+  <section id="screen-types" class="screen">
+    <div class="card pink">
+      <div class="card-title"><span class="bubble">📖</span>16가지 성격 유형 도감</div>
+      <p style="font-size:18px;color:#8A756E">궁금한 유형을 눌러 보세요! 친구들의 성격도 이해할 수 있어요 🌈</p>
+    </div>
+    <div id="typesBody"></div>
+    <div class="btn-row no-print"><button class="btn ghost" id="btnTypesBack">🏠 처음으로</button></div>
+  </section>
+
+  <!-- ═══════════ 6. 유형 상세 ═══════════ -->
+  <section id="screen-detail" class="screen">
+    <div id="detailBody"></div>
+    <div class="btn-row no-print"><button class="btn ghost" id="btnDetailBack">◀ 도감으로 돌아가기</button></div>
+  </section>
+
+  <!-- ═══════════ 7. 우리 반 결과판 ═══════════ -->
+  <section id="screen-class" class="screen">
+    <div class="card mint">
+      <div class="card-title"><span class="bubble" style="background:var(--mint)">🏫</span>반별 결과판</div>
+      <div class="class-bar">
+        <label for="classSelect">보고 있는 반</label>
+        <select id="classSelect"></select>
+        <button class="btn sm ghost" id="btnAddClass">➕ 반 만들기</button>
+        <button class="btn sm ghost" id="btnRenameClass">✏️ 이름 바꾸기</button>
+      </div>
+      <p class="hint">
+        반을 여러 개 만들어 학급마다 따로 모을 수 있어요.
+        결과는 이 컴퓨터에만 저장되고 인터넷으로 전송되지 않아요 🔒
+      </p>
+    </div>
+    <div id="classBody"></div>
+    <div class="btn-row no-print">
+      <button class="btn sm peach" id="btnCsv">📄 이 반 명단 내려받기(CSV)</button>
+      <button class="btn sm mint" id="btnExport">📦 전체 백업 파일 저장</button>
+      <button class="btn sm mint" id="btnImport">📥 백업 파일 불러와 합치기</button>
+      <button class="btn sm ghost" id="btnClearClass">🗑️ 이 반 결과 지우기</button>
+      <button class="btn sm ghost" id="btnDeleteClass">❌ 이 반 없애기</button>
+      <button class="btn sm ghost" id="btnClassBack">🏠 처음으로</button>
+    </div>
+    <input type="file" id="fileImport" accept=".json,application/json" hidden>
+  </section>
+
+</div>
+
+<!-- ═══════════ 선생님의 편지 팝업 ═══════════ -->
+<div class="letter-overlay" id="letterOverlay" hidden>
+  <div class="letter-paper" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+    <div class="letter-flap"></div>
+    <div class="seal">💌</div>
+    <div class="letter-title" id="letterTitle">선생님이 보내는 편지</div>
+    <p class="letter-msg" id="letterMsg"></p>
+    <p class="letter-from" id="letterFrom"></p>
+    <button class="btn sm ghost" id="btnLetterClose">편지 접기</button>
+  </div>
+</div>
+
+<footer class="site-foot no-print">
+  <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
+     title="인스타그램으로 이동">까망이고동이</a></span>
+  <span class="sep">|</span>
+  <span class="ver">v1.1</span>
+</footer>
+
+<div class="saved-toast" id="toast">저장했어요! 🎉</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
