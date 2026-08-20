@@ -1100,7 +1100,7 @@ body {
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v2.3</span>
+  <span class="ver">v2.4</span>
   <span class="sep">|</span>
   <button type="button" class="footlink" id="btnPrivacy">🔒 개인정보 안내</button>
 </footer>
@@ -2873,17 +2873,12 @@ function renderClass() {
     renderClassSelect();
     $('classBody').innerHTML = `
       <div class="card peach">
-        <div class="card-title"><span class="bubble">🏫</span>먼저 반을 만들어주세요</div>
-        <p style="font-size:18px;line-height:1.7">
-          반을 만들면 <b>6자리 코드</b>와 <b>초대 링크·QR</b>이 함께 만들어져요.<br>
-          학생들에게 코드나 QR을 알려주면 바로 검사에 참여할 수 있어요.
+        <div class="card-title"><span class="bubble">🏫</span>먼저 학급을 개설해주세요</div>
+        <p style="font-size:1.125rem;line-height:1.7">
+          위 칸에 학급 이름을 적고 <b>➕ 개설하기</b>를 누르면<br>
+          <b>6자리 숫자 코드</b>와 <b>초대 링크·QR</b>이 함께 만들어져요.
         </p>
-        <div class="btn-row" style="margin-top:16px">
-          <button class="btn mint" id="btnFirstClass">🏫 우리 반 만들기</button>
-        </div>
       </div>`;
-    const b = $('btnFirstClass');
-    if (b) b.addEventListener('click', createClass);
     return;
   }
   if (!CLOUD && !STORAGE_OK) {
@@ -3099,7 +3094,8 @@ $('btnOpenClass').addEventListener('click', openClassFromInput);
 $('newClassInput').addEventListener('keydown', e => { if (e.key === 'Enter') openClassFromInput(); });
 
 async function createClass(preset) {
-  let name = (preset || '').trim().slice(0, 20);
+  // 버튼 핸들러로 쓰이면 이벤트 객체가 들어오므로 글자일 때만 사용
+  let name = (typeof preset === 'string' ? preset : '').trim().slice(0, 20);
   if (!name) {
     const typed = await askText({
       emoji: '🏫',
