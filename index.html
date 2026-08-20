@@ -371,6 +371,55 @@ body {
 .match-card .m { font-size: 22px; color: #E8629B; }
 .match-card .n { font-size: 16px; color: var(--ink-soft); line-height: 1.4; }
 
+/* ── 공용 팝업 (이름 입력 · 확인 · 안내) ── */
+.dlg-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(70, 55, 50, .45);
+  backdrop-filter: blur(3px);
+  opacity: 0; transition: opacity .22s ease;
+}
+.dlg-overlay.show { opacity: 1; }
+.dlg-overlay[hidden] { display: none; }
+
+.dlg {
+  width: min(420px, 100%); text-align: center;
+  background: linear-gradient(180deg, #FFFDF8, #FFF6EF);
+  border: 3px solid #fff; border-radius: 26px;
+  padding: 26px 24px 22px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .22);
+  animation: dlgPop .4s cubic-bezier(.2, .9, .3, 1.5) both;
+}
+@keyframes dlgPop {
+  0% { transform: translateY(28px) scale(.85); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.dlg-emoji { font-size: 40px; line-height: 1; }
+.dlg-title {
+  font-family: var(--font-title); font-size: 23px; letter-spacing: .045em;
+  margin: 6px 0 8px; color: #C9557F;
+}
+.dlg-msg { font-size: 17px; line-height: 1.65; color: var(--ink); white-space: pre-line; }
+.dlg-msg:empty { display: none; }
+.dlg-input {
+  width: 100%; font-family: var(--font-body); font-weight: 700; font-size: 20px; color: var(--ink);
+  border: 3px solid var(--peach); border-radius: 999px; padding: 12px 20px;
+  background: #fff; outline: none; margin-top: 14px; text-align: center;
+  transition: border-color .2s;
+}
+.dlg-input:focus { border-color: var(--pink-deep); }
+.dlg-input[hidden] { display: none; }
+.dlg-area {
+  width: 100%; font-family: var(--font-body); font-weight: 500; font-size: 17px; color: var(--ink);
+  line-height: 1.7; border: 3px solid var(--peach); border-radius: 18px; padding: 12px 14px;
+  background: #fff; outline: none; margin-top: 14px; resize: vertical; text-align: left;
+}
+.dlg-area:focus { border-color: var(--pink-deep); }
+.dlg-area[hidden] { display: none; }
+.dlg.wide { width: min(560px, 100%); }
+.dlg-btns { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.dlg-btns .btn { min-width: 96px; }
+
 /* ── 선생님의 편지 : 봉투 버튼 ── */
 .letter-btn {
   width: 100%; cursor: pointer; font-family: inherit; color: var(--ink);
@@ -609,6 +658,12 @@ body {
   .match-card .e { font-size: 30px; }
   .match-card .m { font-size: 19px; }
   .match-card .n { font-size: 13px; }
+  .dlg { padding: 22px 18px 18px; border-radius: 22px; }
+  .dlg-emoji { font-size: 34px; }
+  .dlg-title { font-size: 20px; }
+  .dlg-msg { font-size: 16px; line-height: 1.55; }
+  .dlg-input { font-size: 18px; padding: 11px 16px; }
+  .dlg-btns { margin-top: 14px; }
   .letter-btn { padding: 16px 14px; gap: 12px; border-radius: 22px; }
   .letter-btn .env { font-size: 38px; }
   .letter-btn .t { font-size: 19px; }
@@ -750,6 +805,7 @@ body {
 
     <div class="btn-row no-print" style="margin-top:20px">
       <button class="btn mint" id="btnSaveClass">💾 우리 반 결과판에 저장</button>
+      <button class="btn peach" id="btnSend">📤 선생님께 결과 보내기</button>
       <button class="btn ghost" id="btnRetry">🔄 다시 검사하기</button>
       <button class="btn ghost" id="btnTypesFromResult">📖 16가지 유형 보기</button>
     </div>
@@ -781,13 +837,11 @@ body {
         <button class="btn sm ghost" id="btnAddClass">➕ 반 만들기</button>
         <button class="btn sm ghost" id="btnRenameClass">✏️ 이름 바꾸기</button>
       </div>
-      <p class="hint">
-        반을 여러 개 만들어 학급마다 따로 모을 수 있어요.
-        결과는 이 컴퓨터에만 저장되고 인터넷으로 전송되지 않아요 🔒
-      </p>
+      <p class="hint" id="classHint">반마다 따로 모을 수 있고, 결과는 이 컴퓨터에만 저장돼요 🔒</p>
     </div>
     <div id="classBody"></div>
     <div class="btn-row no-print">
+      <button class="btn sm" id="btnPaste">📋 여러 명 한꺼번에 등록</button>
       <button class="btn sm peach" id="btnCsv">📄 이 반 명단 내려받기(CSV)</button>
       <button class="btn sm mint" id="btnExport">📦 전체 백업 파일 저장</button>
       <button class="btn sm mint" id="btnImport">📥 백업 파일 불러와 합치기</button>
@@ -798,6 +852,21 @@ body {
     <input type="file" id="fileImport" accept=".json,application/json" hidden>
   </section>
 
+</div>
+
+<!-- ═══════════ 공용 팝업 (이름 입력 · 확인 · 안내) ═══════════ -->
+<div class="dlg-overlay" id="dlgOverlay" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div class="dlg-emoji" id="dlgEmoji">✏️</div>
+    <div class="dlg-title" id="dlgTitle"></div>
+    <p class="dlg-msg" id="dlgMsg"></p>
+    <input class="dlg-input" id="dlgInput" type="text" autocomplete="off">
+    <textarea class="dlg-area" id="dlgArea" rows="7" hidden></textarea>
+    <div class="dlg-btns">
+      <button class="btn sm ghost" id="dlgCancel">취소</button>
+      <button class="btn sm" id="dlgOk">확인</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════ 선생님의 편지 팝업 ═══════════ -->
@@ -816,10 +885,28 @@ body {
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v1.1</span>
+  <span class="ver">v1.5</span>
 </footer>
 
 <div class="saved-toast" id="toast">저장했어요! 🎉</div>
+
+<!-- ▼▼▼ Firebase 연결 (선택) ▼▼▼
+     비워 두면 결과가 이 컴퓨터에만 저장돼요.
+     아래 6줄만 내 것으로 바꾸면 학생 결과가 선생님 화면에 실시간으로 모입니다.
+     자세한 방법은 '파이어베이스_설정안내.md' 참고 -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBWkCQhVy4OYea2ScDnBNC7ig3jCX8SNnk",
+  authDomain: "mbti-1e0c4.firebaseapp.com",
+  projectId: "mbti-1e0c4",
+  storageBucket: "mbti-1e0c4.firebasestorage.app",
+  messagingSenderId: "88065450234",
+  appId: "1:88065450234:web:758929ffbe052549f5e943"
+};
+</script>
+<!-- ▲▲▲ Firebase 연결 끝 ▲▲▲ -->
 
 <script>
 /* ============================================================
@@ -1372,6 +1459,97 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+/* ============================================================
+   공용 팝업 — 브라우저 기본 창 대신 앱과 같은 모양으로
+     askText()  : 글자 입력 받기  → 입력값 또는 null(취소)
+     askYesNo() : 예/아니요 묻기  → true / false
+     showInfo() : 안내만 보여 주기
+   ============================================================ */
+let dlgResolve = null;
+let dlgHideTimer = null;
+
+function openDialog(opt) {
+  return new Promise(resolve => {
+    dlgResolve = resolve;
+    const ov = $('dlgOverlay');
+    const input = $('dlgInput');
+
+    $('dlgEmoji').textContent = opt.emoji || '💬';
+    $('dlgTitle').textContent = opt.title || '';
+    $('dlgMsg').textContent = opt.message || '';
+
+    const area = $('dlgArea');
+    if (opt.input) {
+      input.hidden = false;
+      input.value = opt.defaultValue || '';
+      input.placeholder = opt.placeholder || '';
+      input.maxLength = opt.maxLength || 20;
+    } else {
+      input.hidden = true;
+    }
+    if (opt.textarea) {
+      area.hidden = false;
+      area.value = opt.defaultValue || '';
+      area.placeholder = opt.placeholder || '';
+    } else {
+      area.hidden = true;
+    }
+    ov.querySelector('.dlg').classList.toggle('wide', !!opt.textarea);
+
+    $('dlgOk').textContent = opt.okText || '확인';
+    $('dlgCancel').textContent = opt.cancelText || '취소';
+    $('dlgCancel').hidden = !!opt.hideCancel;
+    $('dlgOk').className = 'btn sm' + (opt.danger ? '' : ' mint');
+
+    clearTimeout(dlgHideTimer);
+    ov.hidden = false;
+    const box = ov.querySelector('.dlg');
+    box.style.animation = 'none';
+    void box.offsetWidth;
+    box.style.animation = '';
+    requestAnimationFrame(() => ov.classList.add('show'));
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => (opt.input ? input : opt.textarea ? area : $('dlgOk')).focus(), 60);
+  });
+}
+
+function closeDialog(value) {
+  const ov = $('dlgOverlay');
+  if (ov.hidden) return;
+  ov.classList.remove('show');
+  document.body.style.overflow = '';
+  clearTimeout(dlgHideTimer);
+  dlgHideTimer = setTimeout(() => { ov.hidden = true; }, 240);
+  const r = dlgResolve;
+  dlgResolve = null;
+  if (r) r(value);
+}
+
+function askText(opt) {
+  return openDialog(Object.assign({ emoji: '✏️', input: true, okText: '저장' }, opt));
+}
+function askYesNo(opt) {
+  return openDialog(Object.assign({ emoji: '🤔', okText: '네', cancelText: '아니요' }, opt))
+    .then(v => v === true);
+}
+function showInfo(opt) {
+  return openDialog(Object.assign({ emoji: 'ℹ️', hideCancel: true, okText: '알겠어요' }, opt));
+}
+
+$('dlgOk').addEventListener('click', () => {
+  const input = $('dlgInput'), area = $('dlgArea');
+  if (!input.hidden) closeDialog(input.value);
+  else if (!area.hidden) closeDialog(area.value);
+  else closeDialog(true);
+});
+$('dlgCancel').addEventListener('click', () => closeDialog(null));
+$('dlgOverlay').addEventListener('click', e => {
+  if (e.target === $('dlgOverlay')) closeDialog(null);
+});
+$('dlgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); closeDialog($('dlgInput').value); }
+});
+
 /* ── 진행 상황 저장 / 불러오기 ── */
 function saveProgress() {
   try {
@@ -1620,13 +1798,168 @@ function renderResult() {
     `오늘도 반짝반짝 빛나는 하루 보내요! 🌟`;
   $('btnLetter').addEventListener('click', openLetter);
 
-  $('btnSaveClass').textContent = `💾 ‘${currentClass()}’ 결과판에 저장`;
+  $('btnSaveClass').textContent = CLOUD
+    ? `📨 선생님께 결과 보내기 (${currentClass()})`
+    : `💾 ‘${currentClass()}’ 결과판에 저장`;
+  // 실시간으로 전송되면 '복사해서 보내기'는 필요 없어요
+  $('btnSend').hidden = CLOUD;
 
   // 그래프 애니메이션 (0에서 시작해 차오르게)
   const bars = $('resultBody').querySelectorAll('.axis-bar span');
   const widths = Array.from(bars).map(b => b.style.width);
   bars.forEach(b => b.style.width = '0%');
   setTimeout(() => bars.forEach((b, i) => b.style.width = widths[i]), 120);
+}
+
+/* ============================================================
+   학생 → 선생님 결과 전달
+   기기가 서로 다르면 결과가 자동으로 모이지 않아요.
+   그래서 학생은 결과를 '한 줄 글'로 보내고,
+   선생님은 그 글들을 붙여넣어 한꺼번에 등록합니다.
+   ============================================================ */
+function myResultLine() {
+  const name = (state.name || '이름 없음').trim();
+  return `${name} ${state.result.code}`;
+}
+
+async function sendToTeacher() {
+  const line = myResultLine();
+  const text = `${line} (나를 알아보는 성격 여행)`;
+
+  // 휴대폰이면 카톡·클래스룸 등으로 바로 공유
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      toast('선생님께 보냈어요! 📤');
+      return;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;   // 사용자가 취소
+    }
+  }
+
+  // 그 밖에는 복사해서 붙여넣기
+  const ok = await copyText(text);
+  await showInfo({
+    emoji: ok ? '📋' : '✍️',
+    title: ok ? '결과를 복사했어요!' : '아래 내용을 선생님께 보내 주세요',
+    message: ok
+      ? `아래 내용이 복사되었어요.\n\n${line}\n\n카카오톡이나 학급 게시판에\n붙여넣기(Ctrl+V) 해서 선생님께 보내 주세요.`
+      : `${line}\n\n이 내용을 선생님께 알려 주세요.`
+  });
+}
+
+function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
+  }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return Promise.resolve(ok);
+  } catch (e) { return Promise.resolve(false); }
+}
+
+/* 붙여넣은 여러 줄에서 '이름 + 유형'을 뽑아내기 */
+function parseResultLines(text) {
+  const codes = Object.keys(TYPES);
+  const found = [];
+  text.split(/[\r\n]+/).forEach(raw => {
+    const line = raw.trim();
+    if (!line) return;
+    const m = line.match(/\b([EI][SN][TF][JP])\b/i);
+    if (!m) return;
+    const code = m[1].toUpperCase();
+    if (!codes.includes(code)) return;
+    // 유형 글자를 빼고 남은 부분에서 이름 찾기
+    let rest = line.replace(m[0], ' ')
+      .replace(/\[[^\]]*\]/g, ' ')                    // [학급방] 같은 대화방 이름 제거
+      .replace(/\([^)]*\)/g, ' ')                     // (나를 알아보는 성격 여행) 등 괄호 내용 제거
+      .replace(/\b(오전|오후)\s*\d{1,2}:\d{2}\b/g, ' ') // 카톡 시간 표시 제거
+      .replace(/[<>{}·|,:\-–—"'`~!?.]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    let words = rest.split(' ')
+      .filter(w => w && !/^(입니다|이에요|예요|이야|야|나왔어요|나왔습니다|결과|성격|유형|저는|제|나는|내|선생님께|제출)$/.test(w));
+
+    // 여러 낱말이 남으면 이름일 가능성이 가장 높은 '마지막 낱말'을 씁니다
+    if (words.length > 1) {
+      const hangul = words.filter(w => /^[가-힣]{2,4}$/.test(w));
+      words = hangul.length ? [hangul[hangul.length - 1]] : [words[words.length - 1]];
+    }
+
+    const name = (words[0] || '이름 없음').replace(/님$/, '');   // '한지호님' → '한지호'
+    found.push({ name: (name || '이름 없음').slice(0, 12), code });
+  });
+  return found;
+}
+
+async function pasteResults() {
+  const cur = currentClass();
+  const text = await openDialog({
+    emoji: '📋',
+    title: '여러 명 한꺼번에 등록',
+    message: `학생들이 보낸 결과를 그대로 붙여넣으세요.\n‘${cur}’에 한 번에 등록돼요.`,
+    textarea: true,
+    placeholder: '김하늘 ENFP\n박서연 ISTJ\n이서준 INFP\n\n(카톡·클래스룸 내용을 통째로 붙여넣어도 돼요)',
+    okText: '등록하기'
+  });
+  if (text === null) return;
+
+  const items = parseResultLines(text);
+  if (!items.length) {
+    await showInfo({
+      emoji: '🤔',
+      title: '찾지 못했어요',
+      message: '‘김하늘 ENFP’ 처럼\n이름과 네 글자 유형이 함께 있어야 해요.'
+    });
+    return;
+  }
+
+  ensureClass(cur);
+  const list = getRoster();
+  const now = new Date();
+  const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const seen = new Set(list.map(r => `${r.name}|${r.code}`));
+  const fresh = [];
+  let skipped = 0;
+  items.forEach(it => {
+    const key = `${it.name}|${it.code}`;
+    if (seen.has(key)) { skipped++; return; }
+    seen.add(key);
+    fresh.push({ name: it.name, code: it.code, date });
+  });
+  const added = fresh.length;
+
+  if (CLOUD) {
+    try {
+      const b = firebase.firestore().batch();
+      fresh.forEach(r => b.set(colMbti.doc(), {
+        cls: cur, name: r.name, code: r.code, date: r.date, added: Date.now()
+      }));
+      await b.commit();
+    } catch (e) {
+      console.error(e);
+      await showInfo({ emoji: '📡', title: '등록하지 못했어요', message: '인터넷 연결을 확인해 주세요.' });
+      return;
+    }
+  } else {
+    fresh.forEach(r => list.push(r));
+    setRoster(list);
+    renderClass();
+  }
+
+  await showInfo({
+    emoji: '🎉',
+    title: `${added}명을 등록했어요!`,
+    message: skipped ? `이미 있던 ${skipped}명은 건너뛰었어요.` : ''
+  });
 }
 
 /* ============================================================
@@ -1663,7 +1996,9 @@ $('letterOverlay').addEventListener('click', e => {
   if (e.target === $('letterOverlay')) closeLetter();   // 바깥을 누르면 닫기
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !$('letterOverlay').hidden) closeLetter();
+  if (e.key !== 'Escape') return;
+  if (!$('dlgOverlay').hidden) closeDialog(null);       // 팝업이 우선
+  else if (!$('letterOverlay').hidden) closeLetter();
 });
 
 /* ============================================================
@@ -1726,7 +2061,79 @@ function renderDetail(code) {
 }
 
 /* ============================================================
-   반별 결과판 (이 컴퓨터에만 저장)
+   클라우드(파이어베이스) 연결 — 설정했을 때만 켜져요
+   학생이 저장하면 선생님 화면에 실시간으로 나타납니다.
+   ============================================================ */
+let CLOUD = false;          // 연결 성공 여부
+let colMbti = null;         // firestore 컬렉션
+let cloudData = {};         // { 반이름: [ {id, name, code, date} ] }
+let cloudReady = false;     // 첫 자료를 받아왔는지
+
+function pickConfig() {
+  // ① index.html 안에 직접 적은 설정
+  if (typeof firebaseConfig !== 'undefined' && firebaseConfig &&
+      firebaseConfig.projectId && !String(firebaseConfig.projectId).includes('여기에')) {
+    return firebaseConfig;
+  }
+  // ② 밖에서 window.firebaseConfig 로 넣어 준 설정
+  if (window.firebaseConfig && window.firebaseConfig.projectId) return window.firebaseConfig;
+  return null;
+}
+
+function initCloud() {
+  const cfg = pickConfig();
+  if (!cfg || !window.firebase) return;
+
+  try {
+    firebase.initializeApp(cfg);
+    colMbti = firebase.firestore().collection('mbti');
+    CLOUD = true;
+
+    colMbti.onSnapshot(snap => {
+      const map = {};
+      snap.forEach(d => {
+        const v = d.data() || {};
+        if (!v.cls || !TYPES[v.code]) return;
+        (map[v.cls] = map[v.cls] || []).push({
+          id: d.id,
+          name: String(v.name || '이름 없음').slice(0, 12),
+          code: v.code,
+          date: v.date || '',
+          added: v.added || 0
+        });
+      });
+      Object.keys(map).forEach(k => map[k].sort((a, b) => (a.added || 0) - (b.added || 0)));
+      cloudData = map;
+      cloudReady = true;
+      if ($('screen-class').classList.contains('on')) renderClass();
+    }, err => {
+      console.error(err);
+      toast('클라우드 연결 오류: ' + (err.code || err.message));
+    });
+  } catch (e) {
+    console.error(e);
+    CLOUD = false;
+  }
+}
+
+function cloudAdd(cls, rec) {
+  return colMbti.add({
+    cls: cls, name: rec.name, code: rec.code, date: rec.date, added: Date.now()
+  });
+}
+function cloudDeleteMany(list) {
+  const b = firebase.firestore().batch();
+  list.forEach(r => r.id && b.delete(colMbti.doc(r.id)));
+  return b.commit();
+}
+function cloudRenameClass(list, newCls) {
+  const b = firebase.firestore().batch();
+  list.forEach(r => r.id && b.update(colMbti.doc(r.id), { cls: newCls }));
+  return b.commit();
+}
+
+/* ============================================================
+   반별 결과판 (클라우드가 꺼져 있으면 이 컴퓨터에만 저장)
    구조 : { "3학년 2반": [ {name, code, date}, ... ], "4학년 1반": [ ... ] }
    ============================================================ */
 function loadClasses() {
@@ -1754,11 +2161,11 @@ function saveClasses(o) {
 }
 
 function currentClass() {
-  const o = loadClasses();
+  const names = allClassNames();
   let cur = '';
   try { cur = localStorage.getItem(KEY_CUR) || ''; } catch (e) { /* 무시 */ }
-  if (!cur || !(cur in o)) {
-    cur = Object.keys(o)[0] || DEFAULT_CLASS;
+  if (!cur || !names.includes(cur)) {
+    cur = names[0] || DEFAULT_CLASS;
     setCurrentClass(cur);
   }
   return cur;
@@ -1773,7 +2180,15 @@ function ensureClass(name) {
   if (!o[name]) { o[name] = []; saveClasses(o); }
   return o;
 }
+/* 반 이름 목록 — 클라우드에 있는 반 + 내가 만든 반 */
+function allClassNames() {
+  const local = Object.keys(loadClasses());
+  const cloud = CLOUD ? Object.keys(cloudData) : [];
+  return Array.from(new Set(local.concat(cloud)));
+}
+
 function getRoster() {
+  if (CLOUD) return cloudData[currentClass()] || [];
   const o = loadClasses();
   return o[currentClass()] || [];
 }
@@ -1783,14 +2198,29 @@ function setRoster(list) {
   saveClasses(o);
 }
 
-function saveToClass() {
+async function saveToClass() {
   if (!state.result) return;
   if (!STORAGE_OK) {
-    alert('이 브라우저에서는 결과를 저장할 수 없어요.\n크롬(Chrome)이나 엣지(Edge)에서 열거나, 시크릿 모드를 꺼 주세요.');
+    await showInfo({
+      emoji: '⚠️',
+      title: '저장할 수 없어요',
+      message: '이 브라우저는 저장 공간이 막혀 있어요.\n크롬(Chrome)이나 엣지(Edge)에서 열거나,\n시크릿 모드를 꺼 주세요.'
+    });
     return;
   }
   const cur = currentClass();
-  const name = state.name || prompt(`‘${cur}’ 결과판에 저장할 이름을 적어 주세요.`, '') || '이름 없음';
+
+  let name = state.name;
+  if (!name) {
+    const typed = await askText({
+      title: '이름을 알려 주세요',
+      message: `‘${cur}’ 결과판에 저장할 이름이에요.`,
+      placeholder: '예) 김하늘',
+      maxLength: 12
+    });
+    if (typed === null) return;                 // 취소
+    name = typed.trim() || '이름 없음';
+  }
   ensureClass(cur);
   const list = getRoster();
   const now = new Date();
@@ -1798,32 +2228,73 @@ function saveToClass() {
   const clean = name.trim().slice(0, 12) || '이름 없음';
 
   // 같은 이름·같은 결과를 실수로 두 번 저장하지 않도록
-  const dup = list.some(r => r.name === clean && r.code === state.result.code && r.date === date);
+  const dup = list.some(r => r.name === clean && r.code === state.result.code);
   if (dup) {
-    if (!confirm(`‘${clean}’의 결과가 이미 저장되어 있어요.\n한 번 더 저장할까요?`)) {
-      toast('이미 저장되어 있어요 🙂');
-      return;
-    }
+    const again = await askYesNo({
+      emoji: '🔁',
+      title: '이미 저장되어 있어요',
+      message: `‘${clean}’의 결과가 이미 결과판에 있어요.\n한 번 더 저장할까요?`,
+      okText: '한 번 더 저장',
+      cancelText: '그만두기'
+    });
+    if (!again) { toast('이미 저장되어 있어요 🙂'); return; }
   }
 
-  list.push({ name: clean, code: state.result.code, date });
-  setRoster(list);
-  toast(`‘${cur}’ 결과판에 저장했어요! 🎉`);
+  const rec = { name: clean, code: state.result.code, date };
+  if (CLOUD) {
+    try {
+      await cloudAdd(cur, rec);
+      toast(`선생님께 전송했어요! ☁️`);
+    } catch (e) {
+      console.error(e);
+      await showInfo({
+        emoji: '📡',
+        title: '전송하지 못했어요',
+        message: '인터넷 연결을 확인하고\n다시 눌러 주세요.'
+      });
+      return;
+    }
+  } else {
+    list.push(rec);
+    setRoster(list);
+    toast(`‘${cur}’ 결과판에 저장했어요! 🎉`);
+  }
+}
+
+function rosterOf(name) {
+  if (CLOUD) return cloudData[name] || [];
+  return loadClasses()[name] || [];
 }
 
 function renderClassSelect() {
-  const o = loadClasses();
   const cur = currentClass();
-  if (!(cur in o)) { o[cur] = []; saveClasses(o); }
-  const names = Object.keys(loadClasses());
+  if (!CLOUD) {
+    const o = loadClasses();
+    if (!(cur in o)) { o[cur] = []; saveClasses(o); }
+  } else {
+    ensureClass(cur);   // 이름만 기억해 둬요 (아직 아무도 저장 안 했을 때도 보이게)
+  }
+  const names = allClassNames();
   $('classSelect').innerHTML = names
-    .map(n => `<option value="${escapeHtml(n)}"${n === cur ? ' selected' : ''}>${escapeHtml(n)} (${loadClasses()[n].length}명)</option>`)
+    .map(n => `<option value="${escapeHtml(n)}"${n === cur ? ' selected' : ''}>${escapeHtml(n)} (${rosterOf(n).length}명)</option>`)
     .join('');
   setCurrentClass(cur);
 }
 
 function renderClass() {
-  if (!STORAGE_OK) {
+  const hint = $('classHint');
+  if (hint) {
+    hint.innerHTML = CLOUD
+      ? '☁️ <b>실시간 연결됨</b> — 학생이 저장하면 이 화면에 바로 나타나요'
+      : '반마다 따로 모을 수 있고, 결과는 이 컴퓨터에만 저장돼요 🔒';
+  }
+  if (CLOUD && !cloudReady) {
+    $('classBody').innerHTML =
+      `<div class="card"><div class="class-empty">☁️ 결과를 불러오는 중이에요…</div></div>`;
+    renderClassSelect();
+    return;
+  }
+  if (!CLOUD && !STORAGE_OK) {
     $('classBody').innerHTML = `
       <div class="card peach">
         <div class="card-title"><span class="bubble">⚠️</span>이 환경에서는 결과를 저장할 수 없어요</div>
@@ -1847,7 +2318,8 @@ function renderClass() {
   const box = $('classBody');
 
   if (list.length === 0) {
-    box.innerHTML = `<div class="card"><div class="class-empty">‘${escapeHtml(cur)}’에는 아직 저장된 결과가 없어요. 검사를 마친 뒤 <b>‘우리 반 결과판에 저장’</b> 버튼을 눌러 보세요! 🌈</div></div>`;
+    box.innerHTML = `<div class="card"><div class="class-empty">‘${escapeHtml(cur)}’에는 아직 저장된 결과가 없어요.<br>
+      검사를 마친 뒤 <b>‘우리 반 결과판에 저장’</b> 버튼을 눌러 보세요! 🌈</div></div>`;
     return;
   }
 
@@ -1906,9 +2378,17 @@ function renderClass() {
   `;
 
   box.querySelectorAll('.del').forEach(b => {
-    b.addEventListener('click', () => {
+    b.addEventListener('click', async () => {
+      const i = Number(b.dataset.i);
+      if (CLOUD) {
+        const rec = getRoster()[i];
+        if (!rec) return;
+        try { await cloudDeleteMany([rec]); }
+        catch (e) { toast('지우지 못했어요 😢'); }
+        return;                       // 화면은 실시간으로 자동 갱신돼요
+      }
       const list2 = getRoster();
-      list2.splice(Number(b.dataset.i), 1);
+      list2.splice(i, 1);
       setRoster(list2);
       renderClass();
     });
@@ -2005,12 +2485,18 @@ $('ansB').addEventListener('click', () => answer('b'));
 $('btnPrev').addEventListener('click', () => {
   if (state.idx > 0) { state.idx--; saveProgress(); renderQuestion(); }
 });
-$('btnQuit').addEventListener('click', () => {
-  if (confirm('검사를 멈추고 처음으로 갈까요?\n(지금까지 고른 답은 저장돼서 나중에 이어서 할 수 있어요)')) {
-    saveProgress();
-    checkResume();
-    show('screen-start');
-  }
+$('btnQuit').addEventListener('click', async () => {
+  const ok = await askYesNo({
+    emoji: '🏠',
+    title: '처음으로 갈까요?',
+    message: '지금까지 고른 답은 저장돼서\n나중에 이어서 할 수 있어요.',
+    okText: '처음으로',
+    cancelText: '계속하기'
+  });
+  if (!ok) return;
+  saveProgress();
+  checkResume();
+  show('screen-start');
 });
 
 $('btnGoTypes').addEventListener('click', () => { renderTypes(); show('screen-types'); });
@@ -2021,14 +2507,24 @@ $('btnDetailBack').addEventListener('click', () => show('screen-types'));
 $('btnGoClass').addEventListener('click', () => { renderClass(); show('screen-class'); });
 $('btnClassBack').addEventListener('click', () => show('screen-start'));
 $('btnCsv').addEventListener('click', downloadCsv);
+$('btnPaste').addEventListener('click', pasteResults);
+$('btnSend').addEventListener('click', sendToTeacher);
 
 /* 반 고르기 · 만들기 · 이름 바꾸기 · 없애기 */
 $('classSelect').addEventListener('change', e => {
   setCurrentClass(e.target.value);
   renderClass();
 });
-$('btnAddClass').addEventListener('click', () => {
-  const name = (prompt('새로 만들 반 이름을 적어 주세요.\n예) 3학년 2반', '') || '').trim().slice(0, 20);
+$('btnAddClass').addEventListener('click', async () => {
+  const typed = await askText({
+    emoji: '🏫',
+    title: '새로운 반 만들기',
+    message: '반 이름을 적어 주세요.',
+    placeholder: '예) 3학년 2반',
+    okText: '만들기'
+  });
+  if (typed === null) return;
+  const name = typed.trim().slice(0, 20);
   if (!name) return;
   if (loadClasses()[name]) { toast('이미 있는 반이에요'); setCurrentClass(name); renderClass(); return; }
   ensureClass(name);
@@ -2036,12 +2532,25 @@ $('btnAddClass').addEventListener('click', () => {
   renderClass();
   toast(`‘${name}’을(를) 만들었어요! 🏫`);
 });
-$('btnRenameClass').addEventListener('click', () => {
+$('btnRenameClass').addEventListener('click', async () => {
   const cur = currentClass();
-  const name = (prompt('반 이름을 새로 적어 주세요.', cur) || '').trim().slice(0, 20);
+  const typed = await askText({
+    emoji: '✏️',
+    title: '반 이름 바꾸기',
+    message: '새로운 이름을 적어 주세요.',
+    defaultValue: cur,
+    okText: '바꾸기'
+  });
+  if (typed === null) return;
+  const name = typed.trim().slice(0, 20);
   if (!name || name === cur) return;
+  if (allClassNames().includes(name)) { toast('같은 이름의 반이 이미 있어요 😢'); return; }
+
+  if (CLOUD) {
+    try { await cloudRenameClass(getRoster(), name); }
+    catch (e) { toast('바꾸지 못했어요 😢'); return; }
+  }
   const o = loadClasses();
-  if (o[name]) { toast('같은 이름의 반이 이미 있어요 😢'); return; }
   o[name] = o[cur] || [];
   delete o[cur];
   saveClasses(o);
@@ -2049,23 +2558,47 @@ $('btnRenameClass').addEventListener('click', () => {
   renderClass();
   toast('이름을 바꿨어요! ✏️');
 });
-$('btnDeleteClass').addEventListener('click', () => {
+$('btnDeleteClass').addEventListener('click', async () => {
   const cur = currentClass();
-  if (!confirm(`‘${cur}’ 반을 통째로 없앨까요?\n저장된 결과도 함께 사라지고 되돌릴 수 없어요!`)) return;
+  const ok = await askYesNo({
+    emoji: '🗑️',
+    title: '이 반을 없앨까요?',
+    message: `‘${cur}’ 반과 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
+    okText: '없애기',
+    cancelText: '그만두기',
+    danger: true
+  });
+  if (!ok) return;
+  if (CLOUD) {
+    try { await cloudDeleteMany(getRoster()); }
+    catch (e) { toast('지우지 못했어요 😢'); return; }
+  }
   const o = loadClasses();
   delete o[cur];
   saveClasses(o);
-  setCurrentClass(Object.keys(o)[0] || DEFAULT_CLASS);
+  setCurrentClass(allClassNames().filter(n => n !== cur)[0] || DEFAULT_CLASS);
   renderClass();
   toast('반을 없앴어요 🗑️');
 });
-$('btnClearClass').addEventListener('click', () => {
+$('btnClearClass').addEventListener('click', async () => {
   const cur = currentClass();
-  if (confirm(`‘${cur}’의 결과를 모두 지울까요? 되돌릴 수 없어요!`)) {
-    setRoster([]);
-    renderClass();
-    toast('모두 지웠어요 🗑️');
+  const ok = await askYesNo({
+    emoji: '🗑️',
+    title: '결과를 모두 지울까요?',
+    message: `‘${cur}’에 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
+    okText: '모두 지우기',
+    cancelText: '그만두기',
+    danger: true
+  });
+  if (!ok) return;
+  if (CLOUD) {
+    try { await cloudDeleteMany(getRoster()); toast('모두 지웠어요 🗑️'); }
+    catch (e) { toast('지우지 못했어요 😢'); }
+    return;
   }
+  setRoster([]);
+  renderClass();
+  toast('모두 지웠어요 🗑️');
 });
 
 /* 백업 저장 · 불러와 합치기 */
@@ -2140,6 +2673,7 @@ function applyClassFromUrl() {
 }
 applyClassFromUrl();
 setCurrentClass(currentClass());
+initCloud();
 
 /* 이어서 하기 버튼 표시 여부 */
 function checkResume() {
