@@ -259,6 +259,34 @@ body {
 }
 .name-box input:focus { border-color: var(--pink-deep); }
 
+/* ── 허브 : 역할 고르기 ── */
+.role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 22px 0 6px; }
+.role-card {
+  cursor: pointer; font-family: inherit; color: var(--ink); text-align: center;
+  background: #fff; border: 3px solid var(--peach); border-radius: 26px;
+  padding: 22px 14px 18px; box-shadow: var(--shadow-sm);
+  transition: transform .14s, box-shadow .14s, border-color .14s;
+}
+.role-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.role-card:active { transform: translateY(2px); }
+.role-card.student { border-color: var(--mint); background: linear-gradient(180deg, #EEFBF5, #fff); }
+.role-card.teacher { border-color: var(--purple); background: linear-gradient(180deg, #F1F3FC, #fff); }
+.role-card .e { display: block; font-size: 46px; line-height: 1.1; }
+.role-card .t {
+  display: block; font-family: var(--font-title); font-size: 23px;
+  letter-spacing: .045em; margin-top: 6px;
+}
+.role-card .d { display: block; font-size: 15px; color: var(--ink-soft); line-height: 1.5; margin-top: 4px; }
+
+.join-title {
+  font-family: var(--font-title); font-size: 30px; letter-spacing: .045em;
+  margin-bottom: 4px; color: var(--ink);
+}
+.join-class { font-size: 17px; color: #2FA07C; font-weight: 700; margin-top: 8px; min-height: 26px; }
+.join-class.bad { color: #E8629B; }
+#codeInput { text-align: center; letter-spacing: .3em; font-size: 26px; text-transform: uppercase; }
+#codeInput:disabled { background: #F6F0EA; color: var(--ink-soft); cursor: not-allowed; }
+
 .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
 .info-item { background: #fff; border-radius: 20px; padding: 16px 10px; text-align: center; box-shadow: var(--shadow-sm); }
 .info-item .ic { font-size: 30px; }
@@ -401,6 +429,35 @@ body {
   margin: 6px 0 8px; color: #C9557F;
 }
 .dlg-msg { font-size: 17px; line-height: 1.65; color: var(--ink); white-space: pre-line; }
+/* 긴 안내문 — 글자를 고르게 벌려 좌우 끝을 딱 맞추는 정렬(균등 배분) */
+.dlg-msg.doc {
+  text-align: justify;
+  text-justify: inter-character;   /* 낱말이 아니라 글자 사이를 고르게 */
+  hyphens: none;
+  white-space: normal;
+  word-break: break-all;   /* 글자 단위로 넘어가도록 (좌우 끝을 꽉 채움) */
+  margin-top: 6px;
+}
+/* 항목마다 옅은 블럭으로 구분 */
+.dlg-msg.doc .sec {
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(90, 74, 69, .10);
+  border-left: 4px solid rgba(62, 104, 200, .30);
+  border-radius: 14px;
+  padding: 11px 14px 12px;
+  margin-bottom: 9px;
+}
+.dlg-msg.doc .sec:last-child { margin-bottom: 0; }
+.dlg-msg.doc b {
+  display: block;
+  text-align: left;            /* 제목 줄은 늘어나지 않게 */
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: .01em;
+  color: #3E68C8;              /* 파란색 제목 */
+  margin-bottom: 3px;
+}
 .dlg-msg:empty { display: none; }
 .dlg-input {
   width: 100%; font-family: var(--font-body); font-weight: 700; font-size: 20px; color: var(--ink);
@@ -418,6 +475,26 @@ body {
 .dlg-area:focus { border-color: var(--pink-deep); }
 .dlg-area[hidden] { display: none; }
 .dlg.wide { width: min(560px, 100%); }
+
+/* 초대 코드 */
+.code-big {
+  font-family: var(--font-title); font-size: 44px; letter-spacing: .18em;
+  color: #C9557F; background: #FFF1B8; border: 3px dashed #E8B06A;
+  border-radius: 20px; padding: 12px 10px 10px; margin: 14px 0 6px;
+}
+.code-hint { font-size: 15px; color: var(--ink-soft); }
+
+/* 초대 QR */
+.qr-box {
+  margin: 16px auto 10px; padding: 14px; background: #fff;
+  border: 3px solid var(--peach); border-radius: 20px;
+  display: inline-block; line-height: 0; box-shadow: var(--shadow-sm);
+}
+.qr-box canvas { width: 220px; height: 220px; image-rendering: pixelated; }
+.qr-link {
+  font-size: 14px; color: var(--ink-soft); line-height: 1.5; word-break: break-all;
+  background: #FFF6EF; border-radius: 12px; padding: 8px 12px; margin-bottom: 4px;
+}
 .dlg-btns { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 .dlg-btns .btn { min-width: 96px; }
 
@@ -560,6 +637,12 @@ body {
 .site-foot a:hover { text-decoration-color: #E8629B; }
 .site-foot .sep { color: #D8C8C0; }
 .site-foot .ver { color: #A08D86; }
+.site-foot .footlink {
+  border: none; background: none; padding: 0; margin: 0; cursor: pointer;
+  font-family: inherit; font-size: inherit; color: #7A88CF; font-weight: 700;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--purple);
+}
+.site-foot .footlink:hover { text-decoration-color: #7A88CF; }
 
 .class-empty { text-align: center; color: var(--ink-soft); padding: 26px 10px; font-size: 19px; }
 .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 17px; }
@@ -726,13 +809,50 @@ body {
 
 <div class="wrap">
 
-  <!-- ═══════════ 1. 시작 화면 ═══════════ -->
-  <section id="screen-start" class="screen on">
+  <!-- ═══════════ 1. 메인 허브 ═══════════ -->
+  <section id="screen-hub" class="screen on">
     <div class="hero">
       <span class="badge" id="heroBadge">🎈 초등학생을 위한 성격 알아보기</span>
       <h1 id="heroTitle"><span class="t1">나를 알아보는</span> <span class="hl">성격 여행</span></h1>
       <div class="title-divider"><span></span><span></span><span></span></div>
       <p class="sub">20개의 질문에 답하면<br>나의 <span class="k1">성격</span>, <span class="k2">강점</span>, <span class="k3">어울리는 직업</span>을 알려 줘요!</p>
+
+      <div class="role-grid">
+        <button class="role-card student" id="roleStudent">
+          <span class="e">🙋</span>
+          <span class="t">학생이에요</span>
+          <span class="d">반 코드를 넣고<br>검사를 시작해요</span>
+        </button>
+        <button class="role-card teacher" id="roleTeacher">
+          <span class="e">👩‍🏫</span>
+          <span class="t">선생님이에요</span>
+          <span class="d">반을 만들고<br>결과를 모아요</span>
+        </button>
+      </div>
+
+      <p class="notice">
+        ※ 이 검사는 정식 MBTI 검사가 아니라, 나를 이해해 보는 <b>재미있는 놀이 활동</b>이에요.<br>
+        결과가 나와 딱 맞지 않아도 괜찮아요. 사람은 자라면서 계속 변한답니다! 🌱
+      </p>
+    </div>
+
+    <div class="btn-row no-print" style="margin-top:16px">
+      <button class="btn sm ghost" id="btnGoTypes">📖 16가지 유형 미리 보기</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ 2. 학생 입장 화면 ═══════════ -->
+  <section id="screen-start" class="screen">
+    <div class="hero">
+      <span class="badge" id="joinBadge">🏫 우리 반에 들어가기</span>
+      <h2 class="join-title">검사를 시작해 볼까요?</h2>
+
+      <div class="name-box" id="codeBox">
+        <label for="codeInput">🏫 우리 반 코드 <span class="req">*선생님이 알려 주셨어요</span></label>
+        <input id="codeInput" type="text" placeholder="예) A3K9P2" maxlength="6" autocomplete="off"
+               autocapitalize="characters" spellcheck="false">
+        <p class="join-class" id="joinClassName"></p>
+      </div>
 
       <div class="name-box">
         <label for="nameInput">✏️ 내 이름을 알려 주세요 <span class="req">*꼭 적어 주세요</span></label>
@@ -749,16 +869,11 @@ body {
         <div class="info-item"><div class="ic">💝</div><div class="t">정답은 없어요</div><div class="d">솔직하게 고르기</div></div>
         <div class="info-item"><div class="ic">🎁</div><div class="t">16가지 결과</div><div class="d">직업까지 추천</div></div>
       </div>
-
-      <p class="notice">
-        ※ 이 검사는 정식 MBTI 검사가 아니라, 나를 이해해 보는 <b>재미있는 놀이 활동</b>이에요.<br>
-        결과가 나와 딱 맞지 않아도 괜찮아요. 사람은 자라면서 계속 변한답니다! 🌱
-      </p>
     </div>
 
     <div class="btn-row no-print" style="margin-top:16px">
-      <button class="btn sm ghost" id="btnGoTypes">📖 16가지 유형 미리 보기</button>
-      <button class="btn sm ghost" id="btnGoClass">🏫 우리 반 결과판</button>
+      <button class="btn sm ghost" id="btnJoinBack">◀ 처음으로</button>
+      <button class="btn sm ghost" id="btnGoTypes2">📖 16가지 유형 미리 보기</button>
     </div>
   </section>
 
@@ -837,21 +952,16 @@ body {
         <select id="classSelect"></select>
         <button class="btn sm ghost" id="btnAddClass">➕ 반 만들기</button>
         <button class="btn sm ghost" id="btnRenameClass">✏️ 이름 바꾸기</button>
-        <button class="btn sm peach" id="btnInvite">🔗 초대 링크 복사</button>
+        <button class="btn sm peach" id="btnInvite">🔗 초대 링크 · QR</button>
       </div>
       <p class="hint" id="classHint">반마다 따로 모을 수 있고, 결과는 이 컴퓨터에만 저장돼요 🔒</p>
     </div>
     <div id="classBody"></div>
     <div class="btn-row no-print">
-      <button class="btn sm" id="btnPaste">📋 여러 명 한꺼번에 등록</button>
-      <button class="btn sm peach" id="btnCsv">📄 이 반 명단 내려받기(CSV)</button>
-      <button class="btn sm mint" id="btnExport">📦 전체 백업 파일 저장</button>
-      <button class="btn sm mint" id="btnImport">📥 백업 파일 불러와 합치기</button>
-      <button class="btn sm ghost" id="btnClearClass">🗑️ 이 반 결과 지우기</button>
-      <button class="btn sm ghost" id="btnDeleteClass">❌ 이 반 없애기</button>
+      <button class="btn sm ghost" id="btnClearClass">🗑️ 전체 결과 지우기</button>
+      <button class="btn sm ghost" id="btnDeleteClass">❌ 학급 없애기</button>
       <button class="btn sm ghost" id="btnClassBack">🏠 처음으로</button>
     </div>
-    <input type="file" id="fileImport" accept=".json,application/json" hidden>
   </section>
 
 </div>
@@ -867,6 +977,24 @@ body {
     <div class="dlg-btns">
       <button class="btn sm ghost" id="dlgCancel">취소</button>
       <button class="btn sm" id="dlgOk">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 초대 링크 · QR 팝업 ═══════════ -->
+<div class="dlg-overlay" id="qrOverlay" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+    <div class="dlg-emoji">🔗</div>
+    <div class="dlg-title" id="qrTitle">학생 초대하기</div>
+    <p class="dlg-msg" id="qrClass"></p>
+    <div class="code-big" id="qrCode">------</div>
+    <p class="code-hint">학생이 이 코드를 넣으면 바로 들어와요</p>
+    <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
+    <p class="qr-link" id="qrLink"></p>
+    <div class="dlg-btns">
+      <button class="btn sm ghost" id="qrClose">닫기</button>
+      <button class="btn sm peach" id="qrCopy">📋 링크 복사</button>
+      <button class="btn sm mint" id="qrSave">🖼️ QR 이미지 저장</button>
     </div>
   </div>
 </div>
@@ -887,7 +1015,9 @@ body {
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v1.7</span>
+  <span class="ver">v2.0</span>
+  <span class="sep">|</span>
+  <button type="button" class="footlink" id="btnPrivacy">🔒 개인정보 안내</button>
 </footer>
 
 <div class="saved-toast" id="toast">저장했어요! 🎉</div>
@@ -910,6 +1040,301 @@ const firebaseConfig = {
 </script>
 <!-- ▲▲▲ Firebase 연결 끝 ▲▲▲ -->
 
+<script>
+/* ============================================================
+   아주 작은 QR 코드 생성기 (바이트 모드, 버전 1~10, 오류복원 M)
+   바깥 라이브러리 없이 동작해요 — 인터넷이 막힌 교실에서도 OK
+   사용법 :  const m = qrMatrix('https://...');   // true/false 2차원 배열
+   ============================================================ */
+(function (global) {
+
+  /* ── 버전별 정보 (오류복원 레벨 M) ──
+     [전체코드워드, 블록당EC수, 그룹1블록수, 그룹1데이터수, 그룹2블록수, 그룹2데이터수] */
+  const VER = {
+    1:  [26,  10, 1, 16, 0, 0],
+    2:  [44,  16, 1, 28, 0, 0],
+    3:  [70,  26, 1, 44, 0, 0],
+    4:  [100, 18, 2, 32, 0, 0],
+    5:  [134, 24, 2, 43, 0, 0],
+    6:  [172, 16, 4, 27, 0, 0],
+    7:  [196, 18, 4, 31, 0, 0],
+    8:  [242, 22, 2, 38, 2, 39],
+    9:  [292, 22, 3, 36, 2, 37],
+    10: [346, 26, 4, 43, 1, 44]
+  };
+
+  /* 정렬 패턴 좌표 */
+  const ALIGN = {
+    1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30],
+    6: [6, 34], 7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50]
+  };
+
+  /* ── 갈루아 필드 (GF 256) ── */
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  (function () {
+    let x = 1;
+    for (let i = 0; i < 255; i++) {
+      EXP[i] = x; LOG[x] = i;
+      x <<= 1;
+      if (x & 0x100) x ^= 0x11D;
+    }
+    for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  })();
+  const mul = (a, b) => (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]];
+
+  /* 리드-솔로몬 오류정정 코드워드 만들기 */
+  function ecBytes(data, ecLen) {
+    let gen = [1];
+    for (let i = 0; i < ecLen; i++) {
+      const next = new Array(gen.length + 1).fill(0);
+      for (let j = 0; j < gen.length; j++) {
+        next[j] ^= gen[j];
+        next[j + 1] ^= mul(gen[j], EXP[i]);
+      }
+      gen = next;
+    }
+    const res = new Array(ecLen).fill(0);
+    for (let i = 0; i < data.length; i++) {
+      const factor = data[i] ^ res[0];
+      res.shift(); res.push(0);
+      if (factor !== 0) for (let j = 0; j < ecLen; j++) res[j] ^= mul(gen[j + 1], factor);
+    }
+    return res;
+  }
+
+  /* BCH 계산 (형식·버전 정보용) */
+  function bch(value, gen, genBits) {
+    let v = value << (genBits - 1);
+    const top = 1 << (genBits - 1);
+    for (let i = 0; i < 32; i++) {
+      const bit = 1 << (31 - i);
+      if (v & bit) {
+        const shift = (31 - i) - (genBits - 1);
+        if (shift >= 0) v ^= gen << shift;
+      }
+    }
+    return v;
+  }
+  function formatBits(mask) {
+    // 오류복원 M = 00
+    const data = (0b00 << 3) | mask;
+    let rem = data;
+    for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >> 9) * 0x537);
+    return ((data << 10) | (rem & 0x3FF)) ^ 0x5412;
+  }
+  function versionBits(ver) {
+    let rem = ver;
+    for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >> 11) * 0x1F25);
+    return (ver << 12) | (rem & 0xFFF);
+  }
+
+  /* ── 문자열 → UTF-8 바이트 ── */
+  function utf8(str) {
+    const out = [];
+    for (const ch of str) {
+      let c = ch.codePointAt(0);
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) out.push(0xC0 | (c >> 6), 0x80 | (c & 63));
+      else if (c < 0x10000) out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+      else out.push(0xF0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    }
+    return out;
+  }
+
+  /* ── 본체 ── */
+  function qrMatrix(text) {
+    const bytes = utf8(text);
+
+    // 1) 담을 수 있는 가장 작은 버전 고르기
+    let ver = 0;
+    for (let v = 1; v <= 10; v++) {
+      const [, ecLen, b1, d1, b2, d2] = VER[v];
+      const dataCw = b1 * d1 + b2 * d2;
+      const lenBits = v <= 9 ? 8 : 16;
+      if (dataCw * 8 >= 4 + lenBits + bytes.length * 8) { ver = v; break; }
+    }
+    if (!ver) throw new Error('내용이 너무 길어요');
+
+    const [, ecLen, b1, d1, b2, d2] = VER[ver];
+    const dataCw = b1 * d1 + b2 * d2;
+    const size = 17 + ver * 4;
+
+    // 2) 비트열 만들기
+    const bits = [];
+    const push = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+    push(0b0100, 4);                       // 바이트 모드
+    push(bytes.length, ver <= 9 ? 8 : 16); // 길이
+    bytes.forEach(b => push(b, 8));
+    for (let i = 0; i < 4 && bits.length < dataCw * 8; i++) bits.push(0);   // 종료
+    while (bits.length % 8) bits.push(0);
+    const cw = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      let b = 0; for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j];
+      cw.push(b);
+    }
+    const PAD = [0xEC, 0x11];
+    let p = 0;
+    while (cw.length < dataCw) cw.push(PAD[p++ % 2]);
+
+    // 3) 블록으로 나누고 오류정정 코드 붙이기
+    const blocks = [], ecs = [];
+    let pos = 0;
+    for (let i = 0; i < b1; i++) { const d = cw.slice(pos, pos + d1); pos += d1; blocks.push(d); ecs.push(ecBytes(d, ecLen)); }
+    for (let i = 0; i < b2; i++) { const d = cw.slice(pos, pos + d2); pos += d2; blocks.push(d); ecs.push(ecBytes(d, ecLen)); }
+
+    const finalCw = [];
+    const maxD = Math.max(d1, d2);
+    for (let i = 0; i < maxD; i++) blocks.forEach(b => { if (i < b.length) finalCw.push(b[i]); });
+    for (let i = 0; i < ecLen; i++) ecs.forEach(e => finalCw.push(e[i]));
+
+    // 4) 격자 만들기
+    const m = [], reserved = [];
+    for (let i = 0; i < size; i++) { m.push(new Array(size).fill(0)); reserved.push(new Array(size).fill(false)); }
+
+    const setF = (r, c, v) => { if (r >= 0 && r < size && c >= 0 && c < size) { m[r][c] = v; reserved[r][c] = true; } };
+
+    // 파인더 + 분리자
+    [[0, 0], [0, size - 7], [size - 7, 0]].forEach(([r, c]) => {
+      for (let i = -1; i <= 7; i++) for (let j = -1; j <= 7; j++) {
+        const on = (i >= 0 && i <= 6 && (j === 0 || j === 6)) ||
+                   (j >= 0 && j <= 6 && (i === 0 || i === 6)) ||
+                   (i >= 2 && i <= 4 && j >= 2 && j <= 4);
+        setF(r + i, c + j, on ? 1 : 0);
+      }
+    });
+
+    // 타이밍 패턴
+    for (let i = 8; i < size - 8; i++) { setF(6, i, i % 2 === 0 ? 1 : 0); setF(i, 6, i % 2 === 0 ? 1 : 0); }
+
+    // 정렬 패턴
+    const ap = ALIGN[ver];
+    ap.forEach(r => ap.forEach(c => {
+      if ((r <= 8 && c <= 8) || (r <= 8 && c >= size - 9) || (r >= size - 9 && c <= 8)) return;
+      for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) {
+        const on = Math.max(Math.abs(i), Math.abs(j)) !== 1;
+        setF(r + i, c + j, on ? 1 : 0);
+      }
+    }));
+
+    // 어두운 모듈 + 형식정보 자리 예약
+    setF(size - 8, 8, 1);
+    for (let i = 0; i <= 8; i++) { if (!reserved[8][i]) setF(8, i, 0); if (!reserved[i][8]) setF(i, 8, 0); }
+    for (let i = size - 8; i < size; i++) { if (!reserved[8][i]) setF(8, i, 0); if (!reserved[i][8]) setF(i, 8, 0); }
+
+    // 버전정보 자리 예약 (버전 7 이상)
+    if (ver >= 7) {
+      for (let i = 0; i < 18; i++) {
+        const r = Math.floor(i / 3), c = i % 3;
+        setF(size - 11 + c, r, 0);
+        setF(r, size - 11 + c, 0);
+      }
+    }
+
+    // 5) 자료 채우기 (오른쪽 아래부터 지그재그)
+    let bi = 0, up = true;
+    const bitAt = i => (i >> 3) < finalCw.length ? (finalCw[i >> 3] >> (7 - (i & 7))) & 1 : 0;
+    for (let col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (let k = 0; k < size; k++) {
+        const row = up ? size - 1 - k : k;
+        for (let d = 0; d < 2; d++) {
+          const c = col - d;
+          if (reserved[row][c]) continue;
+          m[row][c] = bitAt(bi++);
+        }
+      }
+      up = !up;
+    }
+
+    // 6) 마스크 8가지 중 가장 좋은 것 고르기
+    const MASKS = [
+      (i, j) => (i + j) % 2 === 0,
+      (i) => i % 2 === 0,
+      (i, j) => j % 3 === 0,
+      (i, j) => (i + j) % 3 === 0,
+      (i, j) => (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0,
+      (i, j) => ((i * j) % 2) + ((i * j) % 3) === 0,
+      (i, j) => (((i * j) % 2) + ((i * j) % 3)) % 2 === 0,
+      (i, j) => (((i + j) % 2) + ((i * j) % 3)) % 2 === 0
+    ];
+
+    function penalty(g) {
+      let score = 0;
+      // 규칙1 : 같은 색 5칸 이상 연속
+      for (let i = 0; i < size; i++) {
+        for (const dir of [0, 1]) {
+          let run = 1;
+          for (let j = 1; j < size; j++) {
+            const a = dir ? g[j - 1][i] : g[i][j - 1];
+            const b = dir ? g[j][i] : g[i][j];
+            if (a === b) { run++; if (run === 5) score += 3; else if (run > 5) score++; }
+            else run = 1;
+          }
+        }
+      }
+      // 규칙2 : 2x2 같은 색
+      for (let i = 0; i < size - 1; i++) for (let j = 0; j < size - 1; j++) {
+        const v = g[i][j];
+        if (v === g[i][j + 1] && v === g[i + 1][j] && v === g[i + 1][j + 1]) score += 3;
+      }
+      // 규칙3 : 파인더 비슷한 무늬
+      const pat1 = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0];
+      const pat2 = [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1];
+      const match = (arr, pat) => pat.every((v, k) => arr[k] === v);
+      for (let i = 0; i < size; i++) for (let j = 0; j < size - 10; j++) {
+        const row = [], colv = [];
+        for (let k = 0; k < 11; k++) { row.push(g[i][j + k]); colv.push(g[j + k][i]); }
+        if (match(row, pat1) || match(row, pat2)) score += 40;
+        if (match(colv, pat1) || match(colv, pat2)) score += 40;
+      }
+      // 규칙4 : 어두운 칸 비율
+      let dark = 0;
+      for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) dark += g[i][j];
+      const ratio = dark * 100 / (size * size);
+      score += Math.floor(Math.abs(ratio - 50) / 5) * 10;
+      return score;
+    }
+
+    let best = null, bestMask = 0, bestScore = Infinity;
+    for (let mk = 0; mk < 8; mk++) {
+      const g = m.map(r => r.slice());
+      for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) {
+        if (!reserved[i][j] && MASKS[mk](i, j)) g[i][j] ^= 1;
+      }
+      // 형식 정보 넣기
+      const fb = formatBits(mk);
+      for (let i = 0; i < 15; i++) {
+        const bit = (fb >> i) & 1;
+        if (i < 6) g[8][i] = bit;
+        else if (i < 8) g[8][i + 1] = bit;
+        else if (i === 8) g[7][8] = bit;
+        else g[14 - i][8] = bit;
+
+        if (i < 8) g[size - 1 - i][8] = bit;
+        else g[8][size - 15 + i] = bit;
+      }
+      g[size - 8][8] = 1;
+      // 버전 정보 넣기
+      if (ver >= 7) {
+        const vb = versionBits(ver);
+        for (let i = 0; i < 18; i++) {
+          const bit = (vb >> i) & 1;
+          const r = Math.floor(i / 3), c = i % 3;
+          g[size - 11 + c][r] = bit;
+          g[r][size - 11 + c] = bit;
+        }
+      }
+      const sc = penalty(g);
+      if (sc < bestScore) { bestScore = sc; best = g; bestMask = mk; }
+    }
+
+    return best.map(row => row.map(v => v === 1));
+  }
+
+  global.qrMatrix = qrMatrix;
+})(window);
+
+</script>
 <script>
 /* ============================================================
    초등학생 MBTI 성격 알아보기 — 문항 & 결과 데이터
@@ -1478,7 +1903,9 @@ function openDialog(opt) {
 
     $('dlgEmoji').textContent = opt.emoji || '💬';
     $('dlgTitle').textContent = opt.title || '';
-    $('dlgMsg').textContent = opt.message || '';
+    if (opt.html) $('dlgMsg').innerHTML = opt.html;
+    else $('dlgMsg').textContent = opt.message || '';
+    $('dlgMsg').classList.toggle('doc', !!opt.html);
 
     const area = $('dlgArea');
     if (opt.input) {
@@ -1496,7 +1923,7 @@ function openDialog(opt) {
     } else {
       area.hidden = true;
     }
-    ov.querySelector('.dlg').classList.toggle('wide', !!opt.textarea);
+    ov.querySelector('.dlg').classList.toggle('wide', !!(opt.textarea || opt.wide));
 
     $('dlgOk').textContent = opt.okText || '확인';
     $('dlgCancel').textContent = opt.cancelText || '취소';
@@ -1579,6 +2006,32 @@ function clearProgress() {
    ============================================================ */
 async function startQuiz(resume) {
   if (!resume) {
+    // ① 반 코드 확인
+    const code = $('codeInput').value.trim().toUpperCase();
+    if (!code) {
+      await showInfo({
+        emoji: '🏫',
+        title: '반 코드를 넣어 주세요',
+        message: '선생님이 알려 주신\n6자리 코드를 적어 주세요.'
+      });
+      $('codeInput').focus();
+      return;
+    }
+    const found = await findRoom(code);
+    if (!found) {
+      await showInfo({
+        emoji: '🤔',
+        title: '코드를 찾지 못했어요',
+        message: `‘${code}’ 라는 반이 없어요.\n선생님께 코드를 다시 여쭤보세요.`
+      });
+      $('codeInput').focus();
+      return;
+    }
+    ensureClass(code);
+    setCurrentClass(code);
+    rememberRoom(code, found);
+
+    // ② 이름 확인
     const typed = $('nameInput').value.trim();
     if (!typed) {
       await showInfo({
@@ -1811,8 +2264,8 @@ function renderResult() {
   $('btnLetter').addEventListener('click', openLetter);
 
   $('btnSaveClass').textContent = CLOUD
-    ? `📨 선생님께 결과 보내기 (${currentClass()})`
-    : `💾 ‘${currentClass()}’ 결과판에 저장`;
+    ? `📨 선생님께 결과 보내기`
+    : `💾 ‘${roomName(currentClass())}’ 결과판에 저장`;
   // 실시간으로 전송되면 '복사해서 보내기'는 필요 없어요
   $('btnSend').hidden = CLOUD;
 
@@ -1877,103 +2330,6 @@ function copyText(text) {
   } catch (e) { return Promise.resolve(false); }
 }
 
-/* 붙여넣은 여러 줄에서 '이름 + 유형'을 뽑아내기 */
-function parseResultLines(text) {
-  const codes = Object.keys(TYPES);
-  const found = [];
-  text.split(/[\r\n]+/).forEach(raw => {
-    const line = raw.trim();
-    if (!line) return;
-    const m = line.match(/\b([EI][SN][TF][JP])\b/i);
-    if (!m) return;
-    const code = m[1].toUpperCase();
-    if (!codes.includes(code)) return;
-    // 유형 글자를 빼고 남은 부분에서 이름 찾기
-    let rest = line.replace(m[0], ' ')
-      .replace(/\[[^\]]*\]/g, ' ')                    // [학급방] 같은 대화방 이름 제거
-      .replace(/\([^)]*\)/g, ' ')                     // (나를 알아보는 성격 여행) 등 괄호 내용 제거
-      .replace(/\b(오전|오후)\s*\d{1,2}:\d{2}\b/g, ' ') // 카톡 시간 표시 제거
-      .replace(/[<>{}·|,:\-–—"'`~!?.]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    let words = rest.split(' ')
-      .filter(w => w && !/^(입니다|이에요|예요|이야|야|나왔어요|나왔습니다|결과|성격|유형|저는|제|나는|내|선생님께|제출)$/.test(w));
-
-    // 여러 낱말이 남으면 이름일 가능성이 가장 높은 '마지막 낱말'을 씁니다
-    if (words.length > 1) {
-      const hangul = words.filter(w => /^[가-힣]{2,4}$/.test(w));
-      words = hangul.length ? [hangul[hangul.length - 1]] : [words[words.length - 1]];
-    }
-
-    const name = (words[0] || '이름 없음').replace(/님$/, '');   // '한지호님' → '한지호'
-    found.push({ name: (name || '이름 없음').slice(0, 12), code });
-  });
-  return found;
-}
-
-async function pasteResults() {
-  const cur = currentClass();
-  const text = await openDialog({
-    emoji: '📋',
-    title: '여러 명 한꺼번에 등록',
-    message: `학생들이 보낸 결과를 그대로 붙여넣으세요.\n‘${cur}’에 한 번에 등록돼요.`,
-    textarea: true,
-    placeholder: '김하늘 ENFP\n박서연 ISTJ\n이서준 INFP\n\n(카톡·클래스룸 내용을 통째로 붙여넣어도 돼요)',
-    okText: '등록하기'
-  });
-  if (text === null) return;
-
-  const items = parseResultLines(text);
-  if (!items.length) {
-    await showInfo({
-      emoji: '🤔',
-      title: '찾지 못했어요',
-      message: '‘김하늘 ENFP’ 처럼\n이름과 네 글자 유형이 함께 있어야 해요.'
-    });
-    return;
-  }
-
-  ensureClass(cur);
-  const list = getRoster();
-  const now = new Date();
-  const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const seen = new Set(list.map(r => `${r.name}|${r.code}`));
-  const fresh = [];
-  let skipped = 0;
-  items.forEach(it => {
-    const key = `${it.name}|${it.code}`;
-    if (seen.has(key)) { skipped++; return; }
-    seen.add(key);
-    fresh.push({ name: it.name, code: it.code, date });
-  });
-  const added = fresh.length;
-
-  if (CLOUD) {
-    try {
-      const b = firebase.firestore().batch();
-      fresh.forEach(r => b.set(colMbti.doc(), {
-        cls: cur, name: r.name, code: r.code, date: r.date, added: Date.now()
-      }));
-      await b.commit();
-    } catch (e) {
-      console.error(e);
-      await showInfo({ emoji: '📡', title: '등록하지 못했어요', message: '인터넷 연결을 확인해 주세요.' });
-      return;
-    }
-  } else {
-    fresh.forEach(r => list.push(r));
-    setRoster(list);
-    renderClass();
-  }
-
-  await showInfo({
-    emoji: '🎉',
-    title: `${added}명을 등록했어요!`,
-    message: skipped ? `이미 있던 ${skipped}명은 건너뛰었어요.` : ''
-  });
-}
-
 /* ============================================================
    선생님의 편지 팝업
    ============================================================ */
@@ -2010,6 +2366,7 @@ $('letterOverlay').addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (!$('dlgOverlay').hidden) closeDialog(null);       // 팝업이 우선
+  else if (!$('qrOverlay').hidden) closeInvite();
   else if (!$('letterOverlay').hidden) closeLetter();
 });
 
@@ -2078,7 +2435,8 @@ function renderDetail(code) {
    ============================================================ */
 let CLOUD = false;          // 연결 성공 여부
 let colMbti = null;         // firestore 컬렉션
-let cloudData = {};         // { 반이름: [ {id, name, code, date} ] }
+let cloudData = {};         // { 반코드: [ {id, name, code, date} ] }
+let cloudRooms = {};        // { 반코드: 반이름 }
 let cloudReady = false;     // 첫 자료를 받아왔는지
 
 function pickConfig() {
@@ -2117,15 +2475,87 @@ function initCloud() {
       Object.keys(map).forEach(k => map[k].sort((a, b) => (a.added || 0) - (b.added || 0)));
       cloudData = map;
       cloudReady = true;
+      runCleanup();          // 보관 기간이 지난 자료 정리
       if ($('screen-class').classList.contains('on')) renderClass();
     }, err => {
       console.error(err);
       toast('클라우드 연결 오류: ' + (err.code || err.message));
     });
+
+    // 반 이름 목록도 함께 받아 둡니다
+    firebase.firestore().collection('mbtiRooms').onSnapshot(snap => {
+      const r = {};
+      snap.forEach(d => { r[d.id] = (d.data() || {}).name || d.id; });
+      cloudRooms = r;
+      if ($('screen-class').classList.contains('on')) renderClass();
+    }, err => console.error(err));
   } catch (e) {
     console.error(e);
     CLOUD = false;
   }
+}
+
+/* ============================================================
+   보관 기간이 지난 자료 자동 삭제
+   앱이 열릴 때 하루 한 번 검사해서, 90일이 지난 결과를 지웁니다.
+   ============================================================ */
+const RETENTION_HOURS = 24;                  // 보관 기간
+const RETENTION_TEXT = RETENTION_HOURS + '시간';
+const KEY_CLEAN = 'kidMbti.lastClean';
+
+function retentionCutoff() {
+  return Date.now() - RETENTION_HOURS * 60 * 60 * 1000;
+}
+
+/* 너무 자주 돌지 않도록 (10분에 한 번) */
+function cleanupDue() {
+  try {
+    const last = Number(localStorage.getItem(KEY_CLEAN) || 0);
+    if (Date.now() - last < 10 * 60 * 1000) return false;
+    localStorage.setItem(KEY_CLEAN, String(Date.now()));
+  } catch (e) { /* 저장 못 해도 그냥 진행 */ }
+  return true;
+}
+
+/* 이 기기에 저장된 오래된 결과 지우기 */
+function cleanupLocal() {
+  const cutoff = retentionCutoff();
+  const o = loadClasses();
+  let removed = 0;
+  Object.keys(o).forEach(cls => {
+    const keep = (o[cls] || []).filter(r => {
+      // 저장 시각이 있으면 그걸로, 없으면 날짜(그날 끝 시각)로 판단
+      const t = r.added ? r.added
+              : (r.date ? Date.parse(r.date + 'T23:59:59') : NaN);
+      if (isNaN(t)) return true;             // 시각을 모르면 그냥 둬요
+      if (t >= cutoff) return true;
+      removed++;
+      return false;
+    });
+    o[cls] = keep;
+  });
+  if (removed) saveClasses(o);
+  return removed;
+}
+
+/* 클라우드에 있는 오래된 결과 지우기 */
+async function cleanupCloud() {
+  if (!CLOUD) return 0;
+  const cutoff = retentionCutoff();
+  const old = [];
+  Object.keys(cloudData).forEach(cls => {
+    cloudData[cls].forEach(r => { if (r.added && r.added < cutoff) old.push(r); });
+  });
+  if (!old.length) return 0;
+  try { await cloudDeleteMany(old); return old.length; }
+  catch (e) { console.error(e); return 0; }
+}
+
+async function runCleanup() {
+  if (!cleanupDue()) return;
+  const a = cleanupLocal();
+  const b = await cleanupCloud();
+  if (a + b) console.log(`보관 기간(${RETENTION_TEXT})이 지난 결과 ${a + b}건을 지웠어요.`);
 }
 
 function cloudAdd(cls, rec) {
@@ -2177,7 +2607,7 @@ function currentClass() {
   let cur = '';
   try { cur = localStorage.getItem(KEY_CUR) || ''; } catch (e) { /* 무시 */ }
   if (!cur || !names.includes(cur)) {
-    cur = names[0] || DEFAULT_CLASS;
+    cur = names[0] || '';        // 만든 반이 하나도 없으면 빈 값
     setCurrentClass(cur);
   }
   return cur;
@@ -2226,7 +2656,7 @@ async function saveToClass() {
   if (!name) {
     const typed = await askText({
       title: '이름을 알려 주세요',
-      message: `‘${cur}’ 결과판에 저장할 이름이에요.`,
+      message: `‘${roomName(cur)}’ 결과판에 저장할 이름이에요.`,
       placeholder: '예) 김하늘',
       maxLength: 12
     });
@@ -2267,9 +2697,9 @@ async function saveToClass() {
       return;
     }
   } else {
-    list.push(rec);
+    list.push(Object.assign({ added: Date.now() }, rec));   // 저장 시각도 함께
     setRoster(list);
-    toast(`‘${cur}’ 결과판에 저장했어요! 🎉`);
+    toast(`‘${roomName(cur)}’ 결과판에 저장했어요! 🎉`);
   }
 }
 
@@ -2280,15 +2710,17 @@ function rosterOf(name) {
 
 function renderClassSelect() {
   const cur = currentClass();
-  if (!CLOUD) {
-    const o = loadClasses();
-    if (!(cur in o)) { o[cur] = []; saveClasses(o); }
-  } else {
-    ensureClass(cur);   // 이름만 기억해 둬요 (아직 아무도 저장 안 했을 때도 보이게)
+  if (cur) {
+    if (!CLOUD) {
+      const o = loadClasses();
+      if (!(cur in o)) { o[cur] = []; saveClasses(o); }
+    } else {
+      ensureClass(cur);   // 이름만 기억해 둬요 (아직 아무도 저장 안 했을 때도 보이게)
+    }
   }
   const names = allClassNames();
   $('classSelect').innerHTML = names
-    .map(n => `<option value="${escapeHtml(n)}"${n === cur ? ' selected' : ''}>${escapeHtml(n)} (${rosterOf(n).length}명)</option>`)
+    .map(n => `<option value="${escapeHtml(n)}"${n === cur ? ' selected' : ''}>${escapeHtml(roomName(n))} (${rosterOf(n).length}명)</option>`)
     .join('');
   setCurrentClass(cur);
 }
@@ -2304,6 +2736,24 @@ function renderClass() {
     $('classBody').innerHTML =
       `<div class="card"><div class="class-empty">☁️ 결과를 불러오는 중이에요…</div></div>`;
     renderClassSelect();
+    return;
+  }
+  // 아직 만든 반이 없을 때
+  if (!currentClass()) {
+    renderClassSelect();
+    $('classBody').innerHTML = `
+      <div class="card peach">
+        <div class="card-title"><span class="bubble">🏫</span>먼저 반을 만들어 주세요</div>
+        <p style="font-size:18px;line-height:1.7">
+          반을 만들면 <b>6자리 코드</b>와 <b>초대 링크·QR</b>이 함께 만들어져요.<br>
+          학생들에게 코드나 QR을 알려 주면 바로 검사에 참여할 수 있어요.
+        </p>
+        <div class="btn-row" style="margin-top:16px">
+          <button class="btn mint" id="btnFirstClass">🏫 우리 반 만들기</button>
+        </div>
+      </div>`;
+    const b = $('btnFirstClass');
+    if (b) b.addEventListener('click', createClass);
     return;
   }
   if (!CLOUD && !STORAGE_OK) {
@@ -2330,7 +2780,7 @@ function renderClass() {
   const box = $('classBody');
 
   if (list.length === 0) {
-    box.innerHTML = `<div class="card"><div class="class-empty">‘${escapeHtml(cur)}’에는 아직 저장된 결과가 없어요.<br>
+    box.innerHTML = `<div class="card"><div class="class-empty">‘${escapeHtml(roomName(cur))}’에는 아직 저장된 결과가 없어요.<br>
       검사를 마친 뒤 <b>‘우리 반 결과판에 저장’</b> 버튼을 눌러 보세요! 🌈</div></div>`;
     return;
   }
@@ -2358,7 +2808,7 @@ function renderClass() {
 
   box.innerHTML = `
     <div class="card purple">
-      <div class="card-title"><span class="bubble" style="background:var(--purple)">📊</span>${escapeHtml(cur)} 유형별 인원 (총 ${list.length}명)</div>
+      <div class="card-title"><span class="bubble" style="background:var(--purple)">📊</span>${escapeHtml(roomName(cur))} 유형별 인원 (총 ${list.length}명)</div>
       ${sorted.map(([code, n]) => `
         <div class="stat-row">
           <span class="k">${TYPES[code].emoji} ${code}</span>
@@ -2411,69 +2861,6 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-function download(filename, text, mime) {
-  const blob = new Blob([text], { type: mime });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-}
-
-function downloadCsv() {
-  const cur = currentClass();
-  const list = getRoster();
-  if (!list.length) { toast('저장된 결과가 없어요 😢'); return; }
-  const rows = [['반', '이름', 'MBTI', '유형 별명', '날짜']]
-    .concat(list.map(r => [cur, r.name, r.code, TYPES[r.code] ? TYPES[r.code].animal : '', r.date]));
-  const csv = '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
-  download(`${cur}_MBTI_결과.csv`, csv, 'text/csv;charset=utf-8;');
-  toast('파일을 내려받았어요! 📄');
-}
-
-/* 전체 백업 : 다른 컴퓨터에서 불러와 합칠 수 있어요 */
-function exportBackup() {
-  const o = loadClasses();
-  if (!Object.keys(o).length) { toast('저장된 결과가 없어요 😢'); return; }
-  const data = { app: 'kidMbti', version: 1, savedAt: new Date().toISOString(), classes: o };
-  download('MBTI_결과_백업.json', JSON.stringify(data, null, 2), 'application/json;charset=utf-8;');
-  toast('백업 파일을 저장했어요! 📦');
-}
-
-function importBackup(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    let data;
-    try { data = JSON.parse(reader.result); }
-    catch (e) { toast('읽을 수 없는 파일이에요 😢'); return; }
-
-    const incoming = (data && data.classes) ? data.classes : null;
-    if (!incoming || typeof incoming !== 'object') { toast('MBTI 백업 파일이 아니에요 😢'); return; }
-
-    const mine = loadClasses();
-    let added = 0;
-    Object.keys(incoming).forEach(cls => {
-      if (!Array.isArray(incoming[cls])) return;
-      if (!mine[cls]) mine[cls] = [];
-      const seen = new Set(mine[cls].map(r => `${r.name}|${r.code}|${r.date}`));
-      incoming[cls].forEach(r => {
-        if (!r || !r.code || !TYPES[r.code]) return;
-        const key = `${r.name}|${r.code}|${r.date}`;
-        if (seen.has(key)) return;              // 같은 결과는 한 번만
-        seen.add(key);
-        mine[cls].push({ name: String(r.name || '이름 없음').slice(0, 12), code: r.code, date: r.date || '' });
-        added++;
-      });
-    });
-    saveClasses(mine);
-    renderClass();
-    toast(added ? `${added}명의 결과를 합쳤어요! 📥` : '새로 합칠 결과가 없었어요');
-  };
-  reader.readAsText(file, 'utf-8');
-}
-
 /* ============================================================
    이벤트 연결
    ============================================================ */
@@ -2512,15 +2899,37 @@ $('btnQuit').addEventListener('click', async () => {
 });
 
 $('btnGoTypes').addEventListener('click', () => { renderTypes(); show('screen-types'); });
+$('btnGoTypes2').addEventListener('click', () => { renderTypes(); show('screen-types'); });
+
+/* 허브에서 역할 고르기 */
+$('roleStudent').addEventListener('click', () => {
+  show('screen-start');
+  setTimeout(() => $('codeInput').focus(), 200);
+});
+$('roleTeacher').addEventListener('click', async () => {
+  renderClass();
+  show('screen-class');
+  if (allClassNames().length === 0) await createClass();   // 반이 없으면 바로 만들기
+});
+$('btnJoinBack').addEventListener('click', () => show(IS_STUDENT ? 'screen-start' : 'screen-hub'));
+
+/* 코드 입력칸 : 대문자로 바꾸고, 6자리가 되면 바로 확인 */
+$('codeInput').addEventListener('input', e => {
+  const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (e.target.value !== v) e.target.value = v;
+  if (v.length === 6) checkCode(); else $('joinClassName').textContent = '';
+});
+$('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('nameInput').focus(); });
 $('btnTypesFromResult').addEventListener('click', () => { renderTypes(); show('screen-types'); });
-$('btnTypesBack').addEventListener('click', () => show('screen-start'));
+$('btnTypesBack').addEventListener('click', () => show(IS_STUDENT ? 'screen-start' : 'screen-hub'));
 $('btnDetailBack').addEventListener('click', () => show('screen-types'));
 
-$('btnGoClass').addEventListener('click', () => { renderClass(); show('screen-class'); });
-$('btnClassBack').addEventListener('click', () => show('screen-start'));
-$('btnCsv').addEventListener('click', downloadCsv);
-$('btnPaste').addEventListener('click', pasteResults);
-$('btnInvite').addEventListener('click', copyInviteLink);
+$('btnClassBack').addEventListener('click', () => show('screen-hub'));
+$('btnInvite').addEventListener('click', showInvite);
+$('qrClose').addEventListener('click', closeInvite);
+$('qrCopy').addEventListener('click', copyInviteLink);
+$('qrSave').addEventListener('click', saveQrImage);
+$('qrOverlay').addEventListener('click', e => { if (e.target === $('qrOverlay')) closeInvite(); });
 $('btnSend').addEventListener('click', sendToTeacher);
 
 /* 반 고르기 · 만들기 · 이름 바꾸기 · 없애기 */
@@ -2528,23 +2937,33 @@ $('classSelect').addEventListener('change', e => {
   setCurrentClass(e.target.value);
   renderClass();
 });
-$('btnAddClass').addEventListener('click', async () => {
+$('btnAddClass').addEventListener('click', createClass);
+
+async function createClass() {
   const typed = await askText({
     emoji: '🏫',
     title: '새로운 반 만들기',
-    message: '반 이름을 적어 주세요.',
-    placeholder: '예) 3학년 2반',
+    message: '반 이름을 적어 주세요.\n학생을 초대할 코드가 함께 만들어져요.',
+    placeholder: '예) 두클초등학교 6학년 1반',
     okText: '만들기'
   });
   if (typed === null) return;
   const name = typed.trim().slice(0, 20);
   if (!name) return;
-  if (loadClasses()[name]) { toast('이미 있는 반이에요'); setCurrentClass(name); renderClass(); return; }
-  ensureClass(name);
-  setCurrentClass(name);
+
+  // 겹치지 않는 6자리 코드 만들기
+  let code = genCode();
+  const used = new Set(allClassNames().concat(Object.keys(loadRooms())));
+  let guard = 0;
+  while (used.has(code) && guard++ < 50) code = genCode();
+
+  rememberRoom(code, name);
+  ensureClass(code);
+  setCurrentClass(code);
+  try { await cloudSaveRoom(code, name); } catch (e) { console.error(e); }
   renderClass();
-  toast(`‘${name}’을(를) 만들었어요! 🏫`);
-});
+  showInvite();       // 만들자마자 초대 화면 보여 주기
+}
 $('btnRenameClass').addEventListener('click', async () => {
   const cur = currentClass();
   const typed = await askText({
@@ -2573,32 +2992,39 @@ $('btnRenameClass').addEventListener('click', async () => {
 });
 $('btnDeleteClass').addEventListener('click', async () => {
   const cur = currentClass();
+  if (!cur) return;
   const ok = await askYesNo({
     emoji: '🗑️',
-    title: '이 반을 없앨까요?',
-    message: `‘${cur}’ 반과 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
+    title: '이 학급을 없앨까요?',
+    message: `‘${roomName(cur)}’ 학급과 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
     okText: '없애기',
     cancelText: '그만두기',
     danger: true
   });
   if (!ok) return;
+
   if (CLOUD) {
-    try { await cloudDeleteMany(getRoster()); }
-    catch (e) { toast('지우지 못했어요 😢'); return; }
+    try {
+      await cloudDeleteMany(getRoster());
+      await firebase.firestore().collection('mbtiRooms').doc(cur).delete();
+    } catch (e) { toast('없애지 못했어요 😢'); return; }
   }
   const o = loadClasses();
   delete o[cur];
   saveClasses(o);
-  setCurrentClass(allClassNames().filter(n => n !== cur)[0] || DEFAULT_CLASS);
+  const rooms = loadRooms();
+  delete rooms[cur];
+  saveRooms(rooms);
+  setCurrentClass(allClassNames().filter(n => n !== cur)[0] || '');
   renderClass();
-  toast('반을 없앴어요 🗑️');
+  toast('학급을 없앴어요 🗑️');
 });
 $('btnClearClass').addEventListener('click', async () => {
   const cur = currentClass();
   const ok = await askYesNo({
     emoji: '🗑️',
-    title: '결과를 모두 지울까요?',
-    message: `‘${cur}’에 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
+    title: '전체 결과를 지울까요?',
+    message: `‘${roomName(cur)}’에 저장된 결과가\n모두 사라지고 되돌릴 수 없어요!`,
     okText: '모두 지우기',
     cancelText: '그만두기',
     danger: true
@@ -2614,13 +3040,20 @@ $('btnClearClass').addEventListener('click', async () => {
   toast('모두 지웠어요 🗑️');
 });
 
-/* 백업 저장 · 불러와 합치기 */
-$('btnExport').addEventListener('click', exportBackup);
-$('btnImport').addEventListener('click', () => $('fileImport').click());
-$('fileImport').addEventListener('change', e => {
-  const f = e.target.files && e.target.files[0];
-  if (f) importBackup(f);
-  e.target.value = '';
+/* 개인정보 안내 */
+$('btnPrivacy').addEventListener('click', () => {
+  showInfo({
+    emoji: '🔒',
+    title: '개인정보 안내',
+    wide: true,
+    okText: '알겠어요',
+    html:
+      '<div class="sec"><b>① 모으는 정보</b>이름과 검사 결과, 날짜만 저장해요. 그 밖의 정보는 전혀 모으지 않아요.</div>' +
+      '<div class="sec"><b>② 쓰는 목적</b>자기 이해를 돕는 수업 활동에만 써요. 다른 목적으로 쓰거나 밖으로 내보내지 않아요.</div>' +
+      `<div class="sec"><b>③ 보관 기간</b>저장하고 ${RETENTION_TEXT}이 지나면 자동으로 지워져요. 선생님이 ‘전체 결과 지우기’로 더 일찍 지울 수도 있어요.</div>` +
+      '<div class="sec"><b>④ 안전하게 쓰는 방법</b>반 코드는 우리 반 학생에게만 알려 주세요. 수업이 끝나면 결과를 정리해 주세요.</div>' +
+      '<div class="sec"><b>⑤ 검사 결과에 대하여</b>정식 MBTI 검사가 아니라 자기 이해를 돕는 교육용 놀이 활동이에요. 결과로 친구를 판단하거나 놀리지 않도록 함께 약속해 주세요.</div>'
+  });
 });
 
 $('btnSaveClass').addEventListener('click', saveToClass);
@@ -2674,6 +3107,61 @@ function animateTitle() {
 animateTitle();
 
 /* ============================================================
+   반 코드(6자리) 관리
+     · 반을 만들면 코드가 자동으로 생겨요
+     · 결과는 '코드'를 기준으로 모입니다 (반 이름은 보기용)
+   ============================================================ */
+const KEY_ROOMS = 'kidMbti.rooms';          // { 코드: 반이름 }
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';  // 헷갈리는 0·O·1·I 제외
+
+function genCode() {
+  let c = '';
+  const buf = new Uint32Array(6);
+  (window.crypto || window.msCrypto).getRandomValues(buf);
+  for (let i = 0; i < 6; i++) c += CODE_CHARS[buf[i] % CODE_CHARS.length];
+  return c;
+}
+
+function loadRooms() {
+  try { return JSON.parse(localStorage.getItem(KEY_ROOMS)) || {}; }
+  catch (e) { return {}; }
+}
+function saveRooms(o) {
+  try { localStorage.setItem(KEY_ROOMS, JSON.stringify(o)); } catch (e) { /* 무시 */ }
+}
+function rememberRoom(code, name) {
+  const o = loadRooms();
+  o[code] = name;
+  saveRooms(o);
+}
+/* 코드 → 반 이름 (내 기기 기록 → 클라우드 순서로 찾기) */
+function roomName(code) {
+  return loadRooms()[code] || cloudRooms[code] || code;
+}
+
+/* 클라우드에 방 등록 / 찾기 */
+function cloudSaveRoom(code, name) {
+  if (!CLOUD) return Promise.resolve();
+  return firebase.firestore().collection('mbtiRooms').doc(code)
+    .set({ name: name, added: Date.now() });
+}
+async function findRoom(code) {
+  const local = loadRooms()[code];
+  if (local) return local;
+  if (cloudRooms[code]) return cloudRooms[code];
+  if (!CLOUD) return null;
+  try {
+    const d = await firebase.firestore().collection('mbtiRooms').doc(code).get();
+    if (d.exists) {
+      const nm = (d.data() || {}).name || code;
+      cloudRooms[code] = nm;
+      return nm;
+    }
+  } catch (e) { console.error(e); }
+  return null;
+}
+
+/* ============================================================
    선생님 화면 / 학생 화면 나누기
      · 주소에 ?class=... 가 있으면  → 학생용 (검사만)
      · 그냥 열면                    → 선생님용 (반 만들기·결과판)
@@ -2683,25 +3171,138 @@ const IS_STUDENT = (() => {
   catch (e) { return false; }
 })();
 
-function applyRole() {
+/* 링크(또는 QR)로 들어온 학생은 허브를 건너뛰고 바로 입장 화면으로 */
+async function applyRole() {
   if (!IS_STUDENT) return;
-  // 학생에게는 반 관리 화면을 감춰요
-  $('btnGoClass').style.display = 'none';
-  const badge = $('heroBadge');
-  if (badge) badge.textContent = `🏫 ${currentClass()}`;
+  const code = currentClass();
+  $('codeInput').value = code;
+  $('codeInput').disabled = true;
+  const nm = await findRoom(code);
+  $('joinClassName').textContent = nm ? `✅ ${nm}` : `✅ ${code}`;
+  $('joinClassName').classList.remove('bad');
+  $('joinBadge').textContent = `🏫 ${nm || code}`;
+  show('screen-start');
+  setTimeout(() => $('nameInput').focus(), 200);
 }
 
-/* 선생님이 학생에게 보낼 초대 링크 만들기 */
-async function copyInviteLink() {
+/* 학생이 코드를 직접 넣고 들어오기 */
+async function checkCode() {
+  const el = $('joinClassName');
+  const code = $('codeInput').value.trim().toUpperCase();
+  if (code.length < 6) { el.textContent = ''; return null; }
+  el.textContent = '찾는 중이에요…';
+  el.classList.remove('bad');
+  const nm = await findRoom(code);
+  if (nm) {
+    el.textContent = `✅ ${nm}`;
+    el.classList.remove('bad');
+    return code;
+  }
+  el.textContent = '❌ 그런 코드가 없어요. 선생님께 다시 여쭤보세요.';
+  el.classList.add('bad');
+  return null;
+}
+
+/* 선생님이 학생에게 보낼 초대 링크 + QR 코드 */
+function inviteLink() {
+  return location.origin + location.pathname + '?class=' + encodeURIComponent(currentClass());
+}
+
+/* QR을 캔버스에 그리기 (칸 하나를 scale 픽셀로) */
+function drawQr(canvas, text, scale, quiet) {
+  const m = qrMatrix(text);
+  const n = m.length;
+  const px = n + quiet * 2;
+  canvas.width = px * scale;
+  canvas.height = px * scale;
+  const g = canvas.getContext('2d');
+  g.fillStyle = '#FFFFFF';
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  g.fillStyle = '#4A3B36';
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (m[i][j]) g.fillRect((j + quiet) * scale, (i + quiet) * scale, scale, scale);
+    }
+  }
+  return canvas;
+}
+
+function showInvite() {
   const cur = currentClass();
-  const base = location.origin + location.pathname;
-  const link = `${base}?class=${encodeURIComponent(cur)}`;
-  const ok = await copyText(link);
-  await showInfo({
-    emoji: '🔗',
-    title: ok ? '초대 링크를 복사했어요!' : '아래 링크를 학생들에게 보내 주세요',
-    message: `${link}\n\n${ok ? '카카오톡·구글 클래스룸에 붙여넣어 학생들에게 보내 주세요.\n' : ''}이 링크로 들어온 학생의 결과는 ‘${cur}’에 모입니다.`
-  });
+  const link = inviteLink();
+  $('qrClass').textContent = `‘${roomName(cur)}’에 학생을 초대해요.`;
+  $('qrCode').textContent = cur;
+  $('qrLink').textContent = link;
+  try {
+    drawQr($('qrCanvas'), link, 6, 4);
+  } catch (e) {
+    $('qrLink').textContent = link + '\n(QR을 만들지 못했어요: ' + e.message + ')';
+  }
+  const ov = $('qrOverlay');
+  ov.hidden = false;
+  const box = ov.querySelector('.dlg');
+  box.style.animation = 'none';
+  void box.offsetWidth;
+  box.style.animation = '';
+  requestAnimationFrame(() => ov.classList.add('show'));
+  document.body.style.overflow = 'hidden';
+}
+
+let qrHideTimer = null;
+function closeInvite() {
+  const ov = $('qrOverlay');
+  ov.classList.remove('show');
+  document.body.style.overflow = '';
+  clearTimeout(qrHideTimer);
+  qrHideTimer = setTimeout(() => { ov.hidden = true; }, 240);
+}
+
+/* QR을 이미지 파일로 저장 — 반 이름과 안내 글도 함께 */
+function saveQrImage() {
+  const cur = currentClass();
+  const link = inviteLink();
+  const tmp = document.createElement('canvas');
+  try { drawQr(tmp, link, 10, 4); }
+  catch (e) { toast('QR을 만들지 못했어요 😢'); return; }
+
+  const W = tmp.width;
+  const padTop = 96, padBottom = 74;
+  const out = document.createElement('canvas');
+  out.width = W;
+  out.height = W + padTop + padBottom;
+  const g = out.getContext('2d');
+
+  g.fillStyle = '#FFF6F0';
+  g.fillRect(0, 0, out.width, out.height);
+  g.drawImage(tmp, 0, padTop);
+
+  g.textAlign = 'center';
+  g.fillStyle = '#5A4A45';
+  g.font = 'bold 40px "GmarketSans", "Malgun Gothic", sans-serif';
+  g.fillText('나를 알아보는 성격 여행', W / 2, 48);
+  g.fillStyle = '#E8629B';
+  g.font = 'bold 34px "GmarketSans", "Malgun Gothic", sans-serif';
+  g.fillText(cur, W / 2, 86);
+  g.fillStyle = '#8A756E';
+  g.font = '24px "GmarketSans", "Malgun Gothic", sans-serif';
+  g.fillText('휴대폰 카메라로 찍어서 검사에 참여하세요', W / 2, W + padTop + 40);
+
+  out.toBlob(blob => {
+    if (!blob) { toast('저장하지 못했어요 😢'); return; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${roomName(cur)}_초대QR.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('QR 이미지를 저장했어요! 🖼️');
+  }, 'image/png');
+}
+
+async function copyInviteLink() {
+  const ok = await copyText(inviteLink());
+  toast(ok ? '링크를 복사했어요! 📋' : '복사할 수 없어요 😢');
 }
 
 /* 주소에 ?class=3학년 2반 을 붙이면 그 반으로 바로 열려요.
@@ -2719,6 +3320,7 @@ applyClassFromUrl();
 setCurrentClass(currentClass());
 applyRole();
 initCloud();
+if (!CLOUD) runCleanup();    // 클라우드를 안 쓰면 여기서 정리
 
 /* 이어서 하기 버튼 표시 여부 */
 function checkResume() {
