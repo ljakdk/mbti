@@ -251,6 +251,7 @@ body {
 
 .name-box { margin: 22px auto 6px; max-width: 430px; text-align: left; }
 .name-box label { font-size: 18px; display: block; margin-bottom: 8px; color: var(--ink-soft); }
+.name-box label .req { font-size: 15px; color: #E8629B; font-weight: 700; }
 .name-box input {
   width: 100%; font-family: inherit; font-size: 22px; color: var(--ink);
   border: 3px solid var(--peach); border-radius: 999px; padding: 14px 22px;
@@ -546,7 +547,7 @@ body {
 .hint { font-size: 16px; color: var(--ink-soft); line-height: 1.7; }
 /* 만든이 · 버전 */
 .site-foot {
-  max-width: 860px; margin: 0 auto; padding: 22px 16px 10px;
+  max-width: 860px; margin: 34px auto 0; padding: 22px 16px 10px;
   display: flex; gap: 10px; align-items: baseline; justify-content: center; flex-wrap: wrap;
   border-top: 2px dashed rgba(90, 74, 69, .15);
   font-size: 15px; line-height: 1.5; color: var(--ink-soft);
@@ -695,7 +696,7 @@ body {
   .btn.sm { font-size: 15px; padding: 9px 16px; }
   .btn-row { gap: 8px; }
 
-  .site-foot { font-size: 13px; padding: 14px 12px 4px; gap: 7px; }
+  .site-foot { font-size: 13px; margin-top: 26px; padding: 14px 12px 4px; gap: 7px; }
   .deco { display: none; }
 }
 
@@ -728,13 +729,13 @@ body {
   <!-- ═══════════ 1. 시작 화면 ═══════════ -->
   <section id="screen-start" class="screen on">
     <div class="hero">
-      <span class="badge">🎈 초등학생을 위한 성격 알아보기</span>
+      <span class="badge" id="heroBadge">🎈 초등학생을 위한 성격 알아보기</span>
       <h1 id="heroTitle"><span class="t1">나를 알아보는</span> <span class="hl">성격 여행</span></h1>
       <div class="title-divider"><span></span><span></span><span></span></div>
       <p class="sub">20개의 질문에 답하면<br>나의 <span class="k1">성격</span>, <span class="k2">강점</span>, <span class="k3">어울리는 직업</span>을 알려 줘요!</p>
 
       <div class="name-box">
-        <label for="nameInput">✏️ 내 이름을 알려 주세요</label>
+        <label for="nameInput">✏️ 내 이름을 알려 주세요 <span class="req">*꼭 적어 주세요</span></label>
         <input id="nameInput" type="text" placeholder="예) 김하늘" maxlength="12" autocomplete="off">
       </div>
 
@@ -836,6 +837,7 @@ body {
         <select id="classSelect"></select>
         <button class="btn sm ghost" id="btnAddClass">➕ 반 만들기</button>
         <button class="btn sm ghost" id="btnRenameClass">✏️ 이름 바꾸기</button>
+        <button class="btn sm peach" id="btnInvite">🔗 초대 링크 복사</button>
       </div>
       <p class="hint" id="classHint">반마다 따로 모을 수 있고, 결과는 이 컴퓨터에만 저장돼요 🔒</p>
     </div>
@@ -885,7 +887,7 @@ body {
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v1.5</span>
+  <span class="ver">v1.7</span>
 </footer>
 
 <div class="saved-toast" id="toast">저장했어요! 🎉</div>
@@ -1575,9 +1577,19 @@ function clearProgress() {
 /* ============================================================
    검사 진행
    ============================================================ */
-function startQuiz(resume) {
+async function startQuiz(resume) {
   if (!resume) {
-    state.name = $('nameInput').value.trim();
+    const typed = $('nameInput').value.trim();
+    if (!typed) {
+      await showInfo({
+        emoji: '✏️',
+        title: '이름을 알려 주세요',
+        message: '검사를 시작하기 전에\n내 이름을 먼저 적어 주세요.'
+      });
+      $('nameInput').focus();
+      return;
+    }
+    state.name = typed;
     state.idx = 0;
     state.answers = new Array(QUESTIONS.length).fill(null);
     clearProgress();
@@ -2508,6 +2520,7 @@ $('btnGoClass').addEventListener('click', () => { renderClass(); show('screen-cl
 $('btnClassBack').addEventListener('click', () => show('screen-start'));
 $('btnCsv').addEventListener('click', downloadCsv);
 $('btnPaste').addEventListener('click', pasteResults);
+$('btnInvite').addEventListener('click', copyInviteLink);
 $('btnSend').addEventListener('click', sendToTeacher);
 
 /* 반 고르기 · 만들기 · 이름 바꾸기 · 없애기 */
@@ -2660,6 +2673,37 @@ function animateTitle() {
 }
 animateTitle();
 
+/* ============================================================
+   선생님 화면 / 학생 화면 나누기
+     · 주소에 ?class=... 가 있으면  → 학생용 (검사만)
+     · 그냥 열면                    → 선생님용 (반 만들기·결과판)
+   ============================================================ */
+const IS_STUDENT = (() => {
+  try { return new URLSearchParams(location.search).has('class'); }
+  catch (e) { return false; }
+})();
+
+function applyRole() {
+  if (!IS_STUDENT) return;
+  // 학생에게는 반 관리 화면을 감춰요
+  $('btnGoClass').style.display = 'none';
+  const badge = $('heroBadge');
+  if (badge) badge.textContent = `🏫 ${currentClass()}`;
+}
+
+/* 선생님이 학생에게 보낼 초대 링크 만들기 */
+async function copyInviteLink() {
+  const cur = currentClass();
+  const base = location.origin + location.pathname;
+  const link = `${base}?class=${encodeURIComponent(cur)}`;
+  const ok = await copyText(link);
+  await showInfo({
+    emoji: '🔗',
+    title: ok ? '초대 링크를 복사했어요!' : '아래 링크를 학생들에게 보내 주세요',
+    message: `${link}\n\n${ok ? '카카오톡·구글 클래스룸에 붙여넣어 학생들에게 보내 주세요.\n' : ''}이 링크로 들어온 학생의 결과는 ‘${cur}’에 모입니다.`
+  });
+}
+
 /* 주소에 ?class=3학년 2반 을 붙이면 그 반으로 바로 열려요.
    (반마다 다른 링크를 만들어 나눠 줄 때 사용) */
 function applyClassFromUrl() {
@@ -2673,6 +2717,7 @@ function applyClassFromUrl() {
 }
 applyClassFromUrl();
 setCurrentClass(currentClass());
+applyRole();
 initCloud();
 
 /* 이어서 하기 버튼 표시 여부 */
