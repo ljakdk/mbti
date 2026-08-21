@@ -1116,7 +1116,7 @@ body {
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v2.6</span>
+  <span class="ver">v2.7</span>
   <span class="sep">|</span>
   <button type="button" class="footlink" id="btnPrivacy">🔒 개인정보 안내</button>
 </footer>
@@ -2553,6 +2553,8 @@ let colMbti = null;         // firestore 컬렉션
 let cloudData = {};         // { 반코드: [ {id, name, code, date} ] }
 let cloudRooms = {};        // { 반코드: 반이름 }
 let cloudReady = false;     // 첫 자료를 받아왔는지
+let watchCode = '';         // 지금 지켜보는 학급 코드 (한 반만!)
+let unwatch = null;         // 구독 끊는 함수
 
 function pickConfig() {
   // ① index.html 안에 직접 적은 설정
@@ -2573,42 +2575,54 @@ function initCloud() {
     firebase.initializeApp(cfg);
     colMbti = firebase.firestore().collection('mbti');
     CLOUD = true;
-
-    colMbti.onSnapshot(snap => {
-      const map = {};
-      snap.forEach(d => {
-        const v = d.data() || {};
-        if (!v.cls || !TYPES[v.code]) return;
-        (map[v.cls] = map[v.cls] || []).push({
-          id: d.id,
-          name: String(v.name || '이름 없음').slice(0, 12),
-          code: v.code,
-          date: v.date || '',
-          added: v.added || 0
-        });
-      });
-      Object.keys(map).forEach(k => map[k].sort((a, b) => (a.added || 0) - (b.added || 0)));
-      cloudData = map;
-      cloudReady = true;
-      runCleanup();          // 보관 기간이 지난 자료 정리
-      if ($('screen-class').classList.contains('on')) renderClass();
-    }, err => {
-      console.error(err);
-      toast('클라우드 연결 오류: ' + (err.code || err.message));
-    });
-
-    // 반 이름 목록도 함께 받아 둡니다
-    firebase.firestore().collection('mbtiRooms').onSnapshot(snap => {
-      const r = {};
-      snap.forEach(d => { r[d.id] = (d.data() || {}).name || d.id; });
-      cloudRooms = r;
-      if (IS_STUDENT) applyRole();          // 학급 이름을 늦게라도 채워 넣기
-      if ($('screen-class').classList.contains('on')) renderClass();
-    }, err => console.error(err));
+    // 여기서는 연결만 해 둡니다.
+    // 자료를 미리 받아 오지 않아요 → 접속만 해서는 읽기가 한 번도 일어나지 않습니다.
   } catch (e) {
     console.error(e);
     CLOUD = false;
   }
+}
+
+/* 선생님이 결과판을 보는 동안, '그 학급 하나'만 실시간으로 받아옵니다.
+   · 학생은 아예 받아오지 않아요 (검사만 하면 되니까요)
+   · 다른 반·다른 선생님 자료는 건드리지 않습니다 */
+function watchClass(code) {
+  if (!CLOUD || IS_STUDENT) return;
+  if (!code) { stopWatch(); return; }
+  if (watchCode === code && unwatch) return;   // 이미 보고 있으면 그대로
+  stopWatch();
+  watchCode = code;
+  cloudReady = false;
+  // limit(100) : 한 번에 100명까지만 — 실수로 자료를 잔뜩 읽는 것을 막아요
+  unwatch = colMbti.where('cls', '==', code).limit(100).onSnapshot(snap => {
+    const list = [];
+    snap.forEach(d => {
+      const v = d.data() || {};
+      if (!TYPES[v.code]) return;
+      list.push({
+        id: d.id,
+        name: String(v.name || '이름 없음').slice(0, 12),
+        code: v.code,
+        date: v.date || '',
+        added: v.added || 0
+      });
+    });
+    list.sort((a, b) => (a.added || 0) - (b.added || 0));
+    cloudData[code] = list;
+    cloudReady = true;
+    runCleanup();
+    if ($('screen-class').classList.contains('on')) renderClass();
+  }, err => {
+    console.error(err);
+    toast('클라우드 연결 오류: ' + (err.code || err.message));
+  });
+}
+
+/* 결과판을 벗어나면 구독을 끊어요 (읽기가 더 이상 쌓이지 않게) */
+function stopWatch() {
+  if (unwatch) { try { unwatch(); } catch (e) { /* 무시 */ } }
+  unwatch = null;
+  watchCode = '';
 }
 
 /* ============================================================
@@ -2656,11 +2670,13 @@ function cleanupLocal() {
 
 /* 클라우드에 있는 오래된 결과 지우기 */
 async function cleanupCloud() {
-  if (!CLOUD) return 0;
+  if (!CLOUD || IS_STUDENT) return 0;
   const cutoff = retentionCutoff();
+  const mine = new Set(Object.keys(loadRooms()));
   const old = [];
   Object.keys(cloudData).forEach(cls => {
-    cloudData[cls].forEach(r => { if (r.added && r.added < cutoff) old.push(r); });
+    if (!mine.has(cls)) return;        // 내가 만든 학급만 정리해요
+    (cloudData[cls] || []).forEach(r => { if (r.added && r.added < cutoff) old.push(r); });
   });
   if (!old.length) return 0;
   try { await cloudDeleteMany(old); return old.length; }
@@ -2735,9 +2751,11 @@ function ensureClass(name) {
 }
 /* 반 이름 목록 — 클라우드에 있는 반 + 내가 만든 반 */
 function allClassNames() {
+  // 내 기기에 기록된 학급만 보여줍니다.
+  // (다른 선생님이 만든 학급은 목록에 나타나지 않아요)
   const local = Object.keys(loadClasses());
-  const cloud = CLOUD ? Object.keys(cloudData) : [];
-  return Array.from(new Set(local.concat(cloud)));
+  const rooms = Object.keys(loadRooms());
+  return Array.from(new Set(local.concat(rooms)));
 }
 
 function getRoster() {
@@ -2781,7 +2799,9 @@ async function saveToClass() {
   const clean = name.trim().slice(0, 12) || '이름 없음';
 
   // 같은 이름·같은 결과를 실수로 두 번 저장하지 않도록
-  const dup = list.some(r => r.name === clean && r.code === state.result.code);
+  const myKey = sentKey(cur, clean, state.result.code);
+  const dup = list.some(r => r.name === clean && r.code === state.result.code)
+           || (CLOUD && loadSent().includes(myKey));
   if (dup) {
     const again = await askYesNo({
       emoji: '🔁',
@@ -2797,6 +2817,7 @@ async function saveToClass() {
   if (CLOUD) {
     try {
       await cloudAdd(cur, rec);
+      markSent(myKey);
       toast(`선생님께 전송했어요! ☁️`);
     } catch (e) {
       console.error(e);
@@ -2812,6 +2833,19 @@ async function saveToClass() {
     setRoster(list);
     toast(`‘${roomName(cur)}’ 결과판에 저장했어요! 🎉`);
   }
+}
+
+/* 이 기기에서 이미 보낸 결과 기억하기 (클라우드를 읽지 않고 중복을 막아요) */
+const KEY_SENT = 'kidMbti.sent';
+function sentKey(cls, name, code) { return cls + '|' + name + '|' + code; }
+function loadSent() {
+  try { return JSON.parse(localStorage.getItem(KEY_SENT)) || []; } catch (e) { return []; }
+}
+function markSent(k) {
+  try {
+    const a = loadSent();
+    if (!a.includes(k)) localStorage.setItem(KEY_SENT, JSON.stringify(a.concat(k).slice(-50)));
+  } catch (e) { /* 무시 */ }
 }
 
 function rosterOf(name) {
@@ -2837,7 +2871,7 @@ function renderClassSelect() {
         <button class="class-chip${n === cur ? ' on' : ''}" data-code="${escapeHtml(n)}">
           <span>${escapeHtml(roomName(n))}</span>
           <span class="code">${escapeHtml(n)}</span>
-          <span class="n">${rosterOf(n).length}명</span>
+          <span class="n">${n === cur ? rosterOf(n).length + '명' : '보기'}</span>
         </button>`).join('')
     : '';
   box.querySelectorAll('.class-chip').forEach(b => {
@@ -2867,13 +2901,14 @@ async function openClassFromInput() {
 }
 
 function renderClass() {
+  watchClass(currentClass());          // 보고 있는 학급만 실시간으로
   const hint = $('classHint');
   if (hint) {
     hint.innerHTML = CLOUD
       ? '☁️ <b>실시간 연결됨</b> — 학생이 저장하면 이 화면에 바로 나타나요'
       : '반마다 따로 모을 수 있고, 결과는 이 컴퓨터에만 저장돼요 🔒';
   }
-  if (CLOUD && !cloudReady) {
+  if (CLOUD && currentClass() && !cloudReady) {
     $('classBody').innerHTML =
       `<div class="card"><div class="class-empty">☁️ 결과를 불러오는 중이에요…</div></div>`;
     renderClassSelect();
@@ -3103,7 +3138,7 @@ $('btnTypesFromResult').addEventListener('click', () => openTypes('screen-result
 $('btnTypesBack').addEventListener('click', () => show(typesFrom));
 $('btnDetailBack').addEventListener('click', () => show('screen-types'));
 
-$('btnClassBack').addEventListener('click', () => show('screen-hub'));
+$('btnClassBack').addEventListener('click', () => { stopWatch(); show('screen-hub'); });
 $('btnInvite').addEventListener('click', showInvite);
 $('qrClose').addEventListener('click', closeInvite);
 $('qrCopy').addEventListener('click', copyInviteLink);
@@ -3136,6 +3171,17 @@ async function createClass(preset) {
   const used = new Set(allClassNames().concat(Object.keys(loadRooms())));
   let guard = 0;
   while (used.has(code) && guard++ < 50) code = genCode();
+
+  // 전국의 다른 선생님과 코드가 겹치지 않는지 확인해요 (읽기 1~2회)
+  if (CLOUD) {
+    for (let i = 0; i < 5; i++) {
+      try {
+        const d = await firebase.firestore().collection('mbtiRooms').doc(code).get();
+        if (!d.exists) break;
+        code = genCode();
+      } catch (e) { break; }
+    }
+  }
 
   rememberRoom(code, name);
   ensureClass(code);
