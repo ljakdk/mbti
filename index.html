@@ -658,11 +658,25 @@ body {
 }
 .class-bar select:focus { border-color: var(--mint-deep); }
 .hint { font-size: 1rem; color: var(--ink-soft); line-height: 1.7; }
+/* 푸터 위 구분선 — 위쪽 제목 구분선과 같은 모양 */
+.foot-divider {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5625rem; margin: 2.125rem auto 0; max-width: 53.75rem;
+}
+.foot-divider span { width: 0.6875rem; height: 0.6875rem; border-radius: 50%; flex: none; }
+.foot-divider span:nth-child(1) { background: var(--pink-deep); }
+.foot-divider span:nth-child(2) { background: var(--mint-deep); }
+.foot-divider span:nth-child(3) { background: var(--purple-deep); }
+.foot-divider::before, .foot-divider::after {
+  content: ''; height: 3px; width: min(22vw, 6.875rem); border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(90, 74, 69, .22));
+}
+.foot-divider::after { transform: scaleX(-1); }
+
 /* 만든이 · 버전 */
 .site-foot {
-  max-width: 860px; margin: 2.125rem auto 0; padding: 1.375rem 1rem 0.625rem;
+  max-width: 860px; margin: 0 auto; padding: 0.875rem 1rem 0.625rem;
   display: flex; gap: 0.625rem; align-items: baseline; justify-content: center; flex-wrap: wrap;
-  border-top: 2px dashed rgba(90, 74, 69, .15);
   font-size: 0.9375rem; line-height: 1.5; color: var(--ink-soft);
   position: relative; z-index: 1;
 }
@@ -855,7 +869,7 @@ body {
   .btn.sm { font-size: 0.9375rem; padding: 0.5625rem 1rem; }
   .btn-row { gap: 0.5rem; }
 
-  .site-foot { font-size: 0.8125rem; margin-top: 1.625rem; padding: 0.875rem 0.75rem 0.25rem; gap: 0.4375rem; }
+  .site-foot { font-size: 0.8125rem; margin-top: 0; padding: 0.625rem 0.75rem 0.25rem; gap: 0.4375rem; }
   .deco { display: none; }
 }
 
@@ -1096,11 +1110,13 @@ body {
   </div>
 </div>
 
+<div class="foot-divider no-print"><span></span><span></span><span></span></div>
+
 <footer class="site-foot no-print">
   <span>만든이 · <a href="https://www.instagram.com/ggagossam/" target="_blank" rel="noopener noreferrer"
      title="인스타그램으로 이동">까망이고동이</a></span>
   <span class="sep">|</span>
-  <span class="ver">v2.4</span>
+  <span class="ver">v2.6</span>
   <span class="sep">|</span>
   <button type="button" class="footlink" id="btnPrivacy">🔒 개인정보 안내</button>
 </footer>
@@ -1530,7 +1546,7 @@ const TYPES = {
   /* ───────── 분석가형 (NT) ───────── */
   INTJ: {
     emoji: '🦉', animal: '똑똑한 부엉이', nick: '혼자서도 척척 계획하는 부엉이', color: 'purple',
-    tagline: '머릿속에 커다란 계획을 그리는 어린이',
+    tagline: '머릿속에 커다란 계획을 그리는 학생',
     traits: [
       '무엇을 하기 전에 머릿속으로 먼저 계획을 세워요.',
       '한번 목표를 정하면 끝까지 파고들어 해내요.',
@@ -1554,7 +1570,7 @@ const TYPES = {
   },
   INTP: {
     emoji: '🐱', animal: '호기심 고양이', nick: '"왜?"가 가득한 호기심 고양이', color: 'purple',
-    tagline: '궁금한 게 생기면 끝까지 알아내는 어린이',
+    tagline: '궁금한 게 생기면 끝까지 알아내는 학생',
     traits: [
       '"왜 그럴까?" 하는 질문이 머릿속에 가득해요.',
       '관심 있는 것은 어른보다 더 많이 알 때도 있어요.',
@@ -1578,7 +1594,7 @@ const TYPES = {
   },
   ENTJ: {
     emoji: '🦅', animal: '용감한 독수리', nick: '목표를 향해 날아가는 대장 독수리', color: 'purple',
-    tagline: '어디서든 앞장서서 이끄는 든든한 어린이',
+    tagline: '어디서든 앞장서서 이끄는 든든한 학생',
     traits: [
       '해야 할 일을 정하면 바로 행동으로 옮겨요.',
       '모둠 활동에서 자연스럽게 리더가 돼요.',
@@ -1602,7 +1618,7 @@ const TYPES = {
   },
   ENTP: {
     emoji: '🦊', animal: '재치 있는 여우', nick: '아이디어가 쏟아지는 질문 대장 여우', color: 'purple',
-    tagline: '새로운 생각으로 모두를 놀라게 하는 어린이',
+    tagline: '새로운 생각으로 모두를 놀라게 하는 학생',
     traits: [
       '재미있는 아이디어가 끝없이 떠올라요.',
       '토론이나 이야기 나누기를 아주 좋아해요.',
@@ -1628,7 +1644,7 @@ const TYPES = {
   /* ───────── 외교관형 (NF) ───────── */
   INFJ: {
     emoji: '🦄', animal: '신비한 유니콘', nick: '마음을 읽어주는 신비한 유니콘', color: 'mint',
-    tagline: '친구의 마음을 조용히 알아채는 따뜻한 어린이',
+    tagline: '친구의 마음을 조용히 알아채는 따뜻한 학생',
     traits: [
       '말하지 않아도 친구의 기분을 눈치채요.',
       '조용하지만 마음속에 ‘이건 꼭 지켜야 해’ 하는 굳은 믿음이 있어요.',
@@ -1652,7 +1668,7 @@ const TYPES = {
   },
   INFP: {
     emoji: '🐰', animal: '꿈꾸는 토끼', nick: '상상 나라에 사는 꿈꾸는 토끼', color: 'mint',
-    tagline: '마음속에 예쁜 이야기가 가득한 어린이',
+    tagline: '마음속에 예쁜 이야기가 가득한 학생',
     traits: [
       '상상하는 것을 정말 좋아해요.',
       '옳지 않은 일을 보면 마음이 아파요.',
@@ -1676,7 +1692,7 @@ const TYPES = {
   },
   ENFJ: {
     emoji: '🐻', animal: '다정한 곰', nick: '모두의 마음을 모으는 따뜻한 대장 곰', color: 'mint',
-    tagline: '친구들을 챙기며 이끄는 다정한 리더 어린이',
+    tagline: '친구들을 챙기며 이끄는 다정한 리더 학생',
     traits: [
       '친구가 힘들어 보이면 먼저 다가가요.',
       '모둠에서 모두가 참여하도록 이끌어요.',
@@ -1700,7 +1716,7 @@ const TYPES = {
   },
   ENFP: {
     emoji: '🦜', animal: '반짝이는 앵무새', nick: '아이디어가 반짝반짝 빛나는 앵무새', color: 'mint',
-    tagline: '어디서나 즐거움을 만들어 내는 활짝 웃는 어린이',
+    tagline: '어디서나 즐거움을 만들어 내는 활짝 웃는 학생',
     traits: [
       '호기심이 많아 새로운 걸 다 해 보고 싶어요.',
       '친구를 잘 사귀고 분위기를 밝게 만들어요.',
@@ -1726,7 +1742,7 @@ const TYPES = {
   /* ───────── 관리자형 (SJ) ───────── */
   ISTJ: {
     emoji: '🐢', animal: '성실한 거북이', nick: '약속을 꼭 지키는 성실한 거북이', color: 'peach',
-    tagline: '한 걸음씩 꾸준히 해내는 믿음직한 어린이',
+    tagline: '한 걸음씩 꾸준히 해내는 믿음직한 학생',
     traits: [
       '한번 정한 약속과 규칙을 꼭 지켜요.',
       '해야 할 일을 미루지 않고 차근차근 해요.',
@@ -1750,7 +1766,7 @@ const TYPES = {
   },
   ISFJ: {
     emoji: '🐑', animal: '따뜻한 양', nick: '조용히 챙겨주는 다정한 양', color: 'peach',
-    tagline: '아무도 모르게 친구를 도와주는 착한 어린이',
+    tagline: '아무도 모르게 친구를 도와주는 착한 학생',
     traits: [
       '친구가 필요한 것을 먼저 알아채고 도와줘요.',
       '맡은 일을 조용히, 끝까지 해내요.',
@@ -1774,7 +1790,7 @@ const TYPES = {
   },
   ESTJ: {
     emoji: '🦁', animal: '든든한 사자', nick: '우리 반을 이끄는 든든한 사자', color: 'peach',
-    tagline: '규칙을 지키며 앞장서는 믿음직한 어린이',
+    tagline: '규칙을 지키며 앞장서는 믿음직한 학생',
     traits: [
       '해야 할 일을 확실하게 정리하고 실천해요.',
       '규칙과 질서를 중요하게 생각해요.',
@@ -1798,7 +1814,7 @@ const TYPES = {
   },
   ESFJ: {
     emoji: '🐶', animal: '인기쟁이 강아지', nick: '모두를 챙기는 사랑둥이 강아지', color: 'peach',
-    tagline: '친구들과 함께할 때 가장 행복한 어린이',
+    tagline: '친구들과 함께할 때 가장 행복한 학생',
     traits: [
       '친구들과 어울리는 것을 아주 좋아해요.',
       '누가 슬퍼 보이면 바로 달려가 위로해요.',
@@ -1824,7 +1840,7 @@ const TYPES = {
   /* ───────── 탐험가형 (SP) ───────── */
   ISTP: {
     emoji: '🐿️', animal: '손재주 다람쥐', nick: '뚝딱뚝딱 만들어 내는 만능 손 다람쥐', color: 'pink',
-    tagline: '직접 해 보면서 배우는 손재주 좋은 어린이',
+    tagline: '직접 해 보면서 배우는 손재주 좋은 학생',
     traits: [
       '말보다 직접 해 보는 걸 좋아해요.',
       '고장 난 물건을 뜯어보고 고치는 게 재미있어요.',
@@ -1848,7 +1864,7 @@ const TYPES = {
   },
   ISFP: {
     emoji: '🦌', animal: '순한 사슴', nick: '예쁜 것을 사랑하는 순한 사슴', color: 'pink',
-    tagline: '조용히 자기만의 아름다움을 만드는 어린이',
+    tagline: '조용히 자기만의 아름다움을 만드는 학생',
     traits: [
       '색깔, 음악, 그림 같은 예쁜 것을 좋아해요.',
       '다투는 것이 싫고 마음이 여려요.',
@@ -1872,7 +1888,7 @@ const TYPES = {
   },
   ESTP: {
     emoji: '🐆', animal: '재빠른 치타', nick: '번개처럼 빠른 모험가 치타', color: 'pink',
-    tagline: '몸으로 부딪치며 배우는 씩씩한 어린이',
+    tagline: '몸으로 부딪치며 배우는 씩씩한 학생',
     traits: [
       '가만히 있기보다 움직이는 게 좋아요.',
       '새로운 놀이와 모험을 좋아해요.',
@@ -1896,7 +1912,7 @@ const TYPES = {
   },
   ESFP: {
     emoji: '🐬', animal: '신나는 돌고래', nick: '어디서나 신나는 분위기 메이커 돌고래', color: 'pink',
-    tagline: '함께 있으면 저절로 웃음이 나는 어린이',
+    tagline: '함께 있으면 저절로 웃음이 나는 학생',
     traits: [
       '노래, 춤, 놀이를 아주 좋아해요.',
       '친구들 앞에 나서는 걸 즐거워해요.',
@@ -2266,7 +2282,7 @@ function matchCard(code) {
 
 function renderResult() {
   const { code, percent, type: t } = state.result;
-  const who = state.name ? `${escapeHtml(state.name)} 어린이의 성격은` : '나의 성격 유형은';
+  const who = state.name ? `${escapeHtml(state.name)} 학생의 성격은` : '나의 성격 유형은';
   const now = new Date();
   const today = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
 
@@ -2289,7 +2305,7 @@ function renderResult() {
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="bubble">🔎</span>나는 이런 어린이예요</div>
+      <div class="card-title"><span class="bubble">🔎</span>나는 이런 학생이에요</div>
       <ul class="list">${t.traits.map(x => `<li><span class="mk">🌟</span><span>${x}</span></li>`).join('')}</ul>
     </div>
 
@@ -2666,11 +2682,6 @@ function cloudAdd(cls, rec) {
 function cloudDeleteMany(list) {
   const b = firebase.firestore().batch();
   list.forEach(r => r.id && b.delete(colMbti.doc(r.id)));
-  return b.commit();
-}
-function cloudRenameClass(list, newCls) {
-  const b = firebase.firestore().batch();
-  list.forEach(r => r.id && b.update(colMbti.doc(r.id), { cls: newCls }));
   return b.commit();
 }
 
@@ -3056,8 +3067,19 @@ $('btnQuit').addEventListener('click', async () => {
   show('screen-start');
 });
 
-$('btnGoTypes').addEventListener('click', () => { renderTypes(); show('screen-types'); });
-$('btnGoTypes2').addEventListener('click', () => { renderTypes(); show('screen-types'); });
+/* 도감을 어디서 열었는지 기억해 두었다가 그곳으로 돌아가요 */
+let typesFrom = 'screen-hub';
+function openTypes(from) {
+  typesFrom = from;
+  $('btnTypesBack').textContent =
+    from === 'screen-result' ? '◀ 내 결과로 돌아가기' :
+    from === 'screen-start'  ? '◀ 검사하러 가기' : '🏠 처음으로';
+  renderTypes();
+  show('screen-types');
+}
+
+$('btnGoTypes').addEventListener('click', () => openTypes('screen-hub'));
+$('btnGoTypes2').addEventListener('click', () => openTypes('screen-start'));
 
 /* 허브에서 역할 고르기 */
 $('roleStudent').addEventListener('click', () => {
@@ -3077,8 +3099,8 @@ $('codeInput').addEventListener('input', e => {
   if (v.length === 6) checkCode(); else $('joinClassName').textContent = '';
 });
 $('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('nameInput').focus(); });
-$('btnTypesFromResult').addEventListener('click', () => { renderTypes(); show('screen-types'); });
-$('btnTypesBack').addEventListener('click', () => show(IS_STUDENT ? 'screen-start' : 'screen-hub'));
+$('btnTypesFromResult').addEventListener('click', () => openTypes('screen-result'));
+$('btnTypesBack').addEventListener('click', () => show(typesFrom));
 $('btnDetailBack').addEventListener('click', () => show('screen-types'));
 
 $('btnClassBack').addEventListener('click', () => show('screen-hub'));
